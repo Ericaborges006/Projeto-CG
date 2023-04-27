@@ -1,171 +1,220 @@
+//Importação da biblioteca Three.js baseada no importmap
+import * as THREE from 'three';
+
+//importação da biblioteca que nos permite importar objetos 3D em formato FBX baseada no importmap
+import { FBXLoader } from 'FBXLoader';
+
+//Importação da biblioteca que nos permite explorar a nossa cena através do importmap
+import{PointerLockControls} from 'PointerLockControls';
+
+
 document.addEventListener("DOMContentLoaded", Start);
 
 var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
-var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4/3, 0.1, 100);
+var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
 
-renderer.setSize(window.innerWidth -15, window.innerHeight-80);
-
+renderer.setSize(window.innerWidth - 15, window.innerHeight - 80);
 renderer.setClearColor(0xaaaaaa);
 
 document.body.appendChild(renderer.domElement);
 
-var geometria = new THREE.BufferGeometry();
-var vertices = new Float32Array([
-    -0.5, -0.5, 0.0,
-    0.5, -0.5, 0.0,
-    0.0, 0.5, 0.0
-]);
+var geometriaCubo = new THREE.BoxGeometry(1, 1, 1);
 
-const cores = new Float32Array([
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
-]);
-
-geometria.setAttribute('position', new THREE.BufferAttribute(vertices, 3) );
-geometria.setAttribute('color', new THREE.BufferAttribute(new Float32Array(cores), 3));
-
-var material = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
-
-var mesh = new THREE.Mesh(geometria, material);
-
-//Comentamos esta linha de código para o triangulo voltar para o centro
-//mesh.translateX(0.5);
-//mesh.translateY(0.5);
-
-//Comentamos esa linha para o triangulo voltar ao tamanho normal
-//mesh.scale.set(0.25,0.25,0.25);
-
-mesh.translateZ(-6.0);
-
-var anguloDeRotacao = 0;
-
-//Criação da geometria de um cubo, com os parametros de largura, altura e profundidade de 1 unidade
-var geometriaCubo = new THREE.BoxGeometry(1,1,1);
-
-//Criação do material básico que vai permitir configurar o aspeto das faces do cubo
-//Neste caso, ativamos a propriedade vertexColors para que possamos definir as cores dos vértices
-var materialCubo = new THREE.MeshBasicMaterial ({vertexColors: true});
-
-//Primeiro, temos que carregar a textura para uma variável através do método TextureLoader()
 var textura = new THREE.TextureLoader().load('./Images/boxImage.jpg');
-var materialTextura = new THREE.MeshBasicMaterial({ map: textura });
+var materialTextura = new THREE.MeshStandardtMaterial({ map: textura });
 
-//criação da variável que vai conter a informação do mapeamento uv
-var uvAttribute = geometriaCubo.getAttribute('uv');
-
-//Atribuição de posição uv a cada um dos vértices da geometria com recurso à função
-//.setXY(indice do vértice, coordenada u, coordenada v)
-
-/*************************************************************
-*                          DESAFIO 2
-************************************************************/
-//SOL
-uvAttribute.setXY(0,1,1);
-uvAttribute.setXY(1,0.5,1);
-uvAttribute.setXY(2,1,0.5);
-uvAttribute.setXY(3,0.5,0.5);
-
-//FLOR
-uvAttribute.setXY(4,0.5,0.5);
-uvAttribute.setXY(5,0,0.5);
-uvAttribute.setXY(6,0.5,0);
-uvAttribute.setXY(7,0,0);
-
-uvAttribute.setXY(8,1,1);
-uvAttribute.setXY(9,0,1);
-uvAttribute.setXY(10,1,0);
-uvAttribute.setXY(11,0,0);
-
-uvAttribute.setXY(12,1,1);
-uvAttribute.setXY(13,0,1);
-uvAttribute.setXY(14,1,0);
-uvAttribute.setXY(15,0,0);
-
-//ARVORE
-uvAttribute.setXY(16,0.5,1);
-uvAttribute.setXY(17,0,1);
-uvAttribute.setXY(18,0.5,0.5);
-uvAttribute.setXY(19,0,0.5);
-
-//DRAGAO
-uvAttribute.setXY(20,1,0.5);
-uvAttribute.setXY(21,0.5,0.5);
-uvAttribute.setXY(22,1,0);
-uvAttribute.setXY(23,0.5,0);
-
-//como definimos novos valores para o mapeamento uv, é necesário ativar a sua atualização
-geometriaCubo.uvsNeedUpdate = true;
-
-//definição das cores dos vértices do cubo
-const vertexColorsCubo = new Float32Array([
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 0.0,
-
-    1.0, 0.0, 0.0,
-    0.0, 0.0, 0.0,
-    0.0, 0.0, 1.0,
-    0.0, 1.0, 0.0,
-
-    0.0, 0.0, 1.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
-    1.0, 0.0, 0.0,
-    0.0, 0.0, 0.0,
-
-    0.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0,
-
-    0.0, 1.0, 0.0,
-    1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 0.0,
-]);
-
-//associar ao array com as cores dos vértices à propriedade de cor da geometria
-geometriaCubo.setAttribute('color', new THREE.Float32BufferAttribute(vertexColorsCubo, 3));
-
-//apõs criar a geometria e o material, criamos a mesh com os dados da geometria e do material.
 meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
-
-//criamos uma tranlação no eixo do Z para que o triangulo fique dentro do volume de visualização
 meshCubo.translateZ(-6.0);
 
-function Start(){
-    //comentamos esta linha para o truangulo não ser adicionado
-    //cena.add(mesh);
 
-    //adicionamos esta linha para adicionar o cubo a cena
+/********************************************************
+Código base para importação de objetos 3D em formato FBX
+*********************************************************/
+
+//variável que guardará o objeto importado
+var objetoImportado;
+
+//variável que irá guardar o controlador de aimações do objeto importado
+var mixerAnimacao;
+
+//variável que é responsável por guardar o tempo da aplicação
+var relogio = new THREE.Clock();
+
+//variável com o objeto responsável por importar ficheiros FBX
+var importer = new THREE.FBXLoader();
+
+
+
+importer.load('./Objetos/Samba Dancing.fbx', function (object) {
+
+    //o mixerAnimacao é inicializado tendo em conta o objeto importado
+    mixerAnimacao = new THREE.AnimationMixer(object);
+
+    //object.animations é um array com todas as animações que o objeto trás quando é importado
+    //o que fazemos é criar uma ação de animação tendo em conta a animação que é pretendida
+    //de seguida é inicializada a reporodução da animação
+    var action = mixerAnimacao.clipAction(object.animations[0]);
+    action.play();
+
+    //object.traverse é uma função que percorre todos os filhos desse mesmo objeto.
+    //o primeiro e único parâmetro da função é um anova função que deve ser chamada para cada filho.
+    //neste caso, o que nós fazemos é ver se o filho tem uma mesh e, no caso de ter,
+    //é indicado a esse objeto que deve permitir e projetar e receber sombras, respetivamente.
+    object.traverse(function (child) {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+});
+
+//adiciona o objeto importado à cena
+cena.add(object);	
+
+//quando o objeto é importado, esta tem uma escala de 1 nos 3 eixos (XYZ). Uma vez que
+//este é demasiado grande, mudamos a escala deste projeto para ter 0.01 em todos os eixos.
+object.scale.x = 0.01;
+object.scale.y = 0.01;
+object.scale.z = 0.01;
+
+//Mudamos a posição do objeto importado para que este não fique na mesma posição que o cubo.
+object.position.x = 1.5;
+object.position.y = -0.5;
+object.position.z = -6.0;
+
+//Guardamos o objeto importado na variável objetoImportado.
+objetoImportado = object;
+});
+
+
+const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
+
+controls.addEventListener('lock', function() {
+    //Possibilidade de programar comportamentos (ThreeJS ou mesmo HTML) quando
+    //o POinterLockControls é ativado.
+});
+controls.addEventListener('unlock', function() {
+    //Possibilidade de programar comportamentos (ThreeJS ou mesmo HTML) quando
+    //o POinterLockControls é ativado.
+});
+
+//Ativação do PointerLockControls através do clique na cena 
+//para desativar o PointerLockControls, basta pressionar na tecla Enter
+document.addEventListener(
+        'click', 
+        function() {
+            controls.lock();
+        }, 
+        false
+    );
+
+//Adiciona o listener que permite detetar quando uma tecla é pressionada
+document.addEventListener("keydown", onDocumentKeyDown, false);
+
+//função que permite processar o evento de premir teclas e definir o seu respetivo comportamento
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    //comportamento para a tecla W
+    if (keyCode == 87) {
+        controls.moveForward(0.25);
+    }
+    //Comportamento para a tecla S
+    else if (keyCode == 83) {
+        controls.moveForward(-0.25);
+    }
+    //Comportamento para a tecla A
+    else if (keyCode == 65) {
+        controls.moveRight(-0.25);
+    }
+    //Comportamento para a tecla D
+    else if (keyCode == 68) {
+        controls.moveRight(0.25);
+    }
+    //Comportamento para a tecla Barra de Espaço
+    else if (keyCode == 32) {
+        //verificar se o cubo está presente na cena.
+        //caso esteja, removemos. Caso contrário, adicionamos.
+        if(meshCubo.parent == cena){
+            cena.remove(meshCubo);
+        }else{
+            cena.add(meshCubo);
+        }
+    }
+};
+
+/********************************************************
+ *                          SKYBOX                      *    
+ * ******************************************************/
+
+//Carregamento de texturas para as variáveis
+var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
+var texture_esq = new THREE.TextureLoader().load('./Skybox/negx.jpg');      //imagem da esquerda
+var texture_up = new THREE.TextureLoader().load('./Skybox/posy.jpg');      //imagem de cima
+var texture_dn = new THREE.TextureLoader().load('./Skybox/negy.jpg');      //imagem de baixo
+var texture_bk = new THREE.TextureLoader().load('./Skybox/posz.jpg');      //imagem de trás
+var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');      //imagem da frente
+
+//array que vai armazenar as texturas
+var materialArray = [];
+
+//Associar a texturas carrergadas ao array
+materialArray.push(new THREE.MeshBasicMaterial({map: texture_dir}));
+materialArray.push(new THREE.MeshBasicMaterial({map: texture_esq}));
+materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
+materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
+materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
+materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
+
+//ciclo para fazer com que as texturas do array sejam aplicadas na parte inferior do cubo
+for (var i = 0; i < 6; i++)
+    materialArray[i].side = THREE.BackSide;
+
+//Criação da geometria do skybox
+var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
+
+//Criação da mesh que vai conter a geometria e as texturas
+var skybox = new THREE.Mesh(skyboxGeo, materialArray);
+
+//adicionar o skybox à cena
+cena.add(skybox);
+
+
+function Start() {
+
     cena.add(meshCubo);
+
+    //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
+    var focoLuz = new THREE.SpotLight(0xffffff, 1);
+
+    //Mudar a poisção da luz para ficar 5 unidades a cima de onde a câmara se encontra.~
+    focoLuz.position.y = 5;
+    focoLuz.position.z = 10;
+
+    //Dizemos a light pata ficar a apontar para a poisção do cubo.
+    focoLuz.lookat(meshCubo.position);
+
+    //Adicionamos a luz à cena.
+    cena.add(focoLuz);
+
 
     renderer.render(cena, camaraPerspetiva);
 
-    //função para chamar a nossa função de loop
     requestAnimationFrame(loop);
 }
 
-function loop()
-{
-    //comentamos a linha que faz o triangulo rodar pois já não precisamos dela
-    //mesh.rotateY(Math.PI/180 * 1);
+function loop() {
 
-    //tal como fizemos inicialmente com o triangulo, vamos colocar o cubo a rodar no eixo do Y
-    meshCubo.rotateY(Math.PI/180 * 1);
+    meshCubo.rotateY(Math.PI / 180 * 1);
 
-    //função chamada para gerarmos um novo frame
+    //Necessário atualizar o mixer de animação tendo em conta o tempo desde o ultimo update.
+    //relogio.getDelta() indica quanto tempo passou desde o último frame renderizado.
+    if(mixerAnimacao){
+        mixerAnimacao.update(relogio.getDelta());
+    }
+
     renderer.render(cena, camaraPerspetiva);
 
-    //função chamada para executar de novo a funão loop de forma a gerar o frame seguinte
     requestAnimationFrame(loop);
 }
