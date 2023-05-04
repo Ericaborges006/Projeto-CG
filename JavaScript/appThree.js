@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { FBXLoader } from 'FBXLoader';
 
 //Importação da biblioteca que nos permite explorar a nossa cena através do importmap
-import{PointerLockControls} from 'PointerLockControls';
+import { PointerLockControls } from 'PointerLockControls';
 
 
 document.addEventListener("DOMContentLoaded", Start);
@@ -24,9 +24,9 @@ document.body.appendChild(renderer.domElement);
 var geometriaCubo = new THREE.BoxGeometry(1, 1, 1);
 
 var textura = new THREE.TextureLoader().load('./Images/boxImage.jpg');
-var materialTextura = new THREE.MeshStandardtMaterial({ map: textura });
+var materialTextura = new THREE.MeshStandardMaterial({ map: textura });
 
-meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
+var meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
 meshCubo.translateZ(-6.0);
 
 
@@ -44,9 +44,7 @@ var mixerAnimacao;
 var relogio = new THREE.Clock();
 
 //variável com o objeto responsável por importar ficheiros FBX
-var importer = new THREE.FBXLoader();
-
-
+var importer = new FBXLoader();
 
 importer.load('./Objetos/Samba Dancing.fbx', function (object) {
 
@@ -149,12 +147,12 @@ function onDocumentKeyDown(event) {
  * ******************************************************/
 
 //Carregamento de texturas para as variáveis
-var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
+/*var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
 var texture_esq = new THREE.TextureLoader().load('./Skybox/negx.jpg');      //imagem da esquerda
 var texture_up = new THREE.TextureLoader().load('./Skybox/posy.jpg');      //imagem de cima
 var texture_dn = new THREE.TextureLoader().load('./Skybox/negy.jpg');      //imagem de baixo
 var texture_bk = new THREE.TextureLoader().load('./Skybox/posz.jpg');      //imagem de trás
-var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');      //imagem da frente
+var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');     //imagem da frente
 
 //array que vai armazenar as texturas
 var materialArray = [];
@@ -170,9 +168,43 @@ materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
 //ciclo para fazer com que as texturas do array sejam aplicadas na parte inferior do cubo
 for (var i = 0; i < 6; i++)
     materialArray[i].side = THREE.BackSide;
+*/
+
+
+//Em vez de criar 6 variáveis para guardar as texturas, podemos criar uma função reutilizável qur dá loop pelas imagens.
+//A função createPathStrings() recebe como parâmetro o file image name, filename
+
+function createPathStrings(filename)
+{
+    var path = "./Skybox/";
+    var baseFileName = path + filename;
+    var format = ".tga";
+    var sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+    var pathStrings = sides.map(function(side) {
+        return baseFileName + "_" + side + format;} );
+    
+    return pathStrings;
+}//isto deve criar um array de strings com o path de cada imagem do género ['./SkyBox/stormydays_ft.tga', './SkyBox/stormydays_bk.tga', ...]
+
+//agora temos de dar load de cada textura usando o TextureLoader.load().
+//Para isso, vamos usar a função map() que vai percorrer o array de strings e carregar cada uma das texturas.
+
+function createMaterialArray(filename){
+    var skyboxImagepaths = createPathStrings(filename);
+    var materialArray = skyboxImagepaths.map(function(image){
+        let texture = new THREE.TextureLoader().load(image);
+
+        return new THREE.MeshBasicMaterial({map: texture, side: THREE.BackSide});
+    });
+
+    return materialArray;
+}
+
+//Criação do array de materiais que vai conter as texturas
+var materialArray = createMaterialArray('stormydays');
 
 //Criação da geometria do skybox
-var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
+var skyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000);
 
 //Criação da mesh que vai conter a geometria e as texturas
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
@@ -193,14 +225,14 @@ function Start() {
     focoLuz.position.z = 10;
 
     //Dizemos a light pata ficar a apontar para a poisção do cubo.
-    focoLuz.lookat(meshCubo.position);
+    focoLuz.lookAt(meshCubo.position);
 
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
 
 
     renderer.render(cena, camaraPerspetiva);
-
+    
     requestAnimationFrame(loop);
 }
 
@@ -218,3 +250,4 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+
