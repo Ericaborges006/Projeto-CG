@@ -9,7 +9,7 @@ Como dar import a objetos do tipo blender? abrir como blender e exportar como FB
 - 
 
 
-#TUTORIAL PARA O ✨ESPECIAL✨
+# TUTORIAL PARA O ✨ESPECIAL✨
 
 As nossas extensões de github no VS Code não são compatíveis com o LiveServer. O que fazer então?
 Criar um branch. Clonar este branch para o pc. Agora devemos abrir *a pasta que acabamos de fazer download* e não o repositório remoto. Assim conseguimos usar o LiveServer.
