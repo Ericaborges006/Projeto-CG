@@ -66,11 +66,8 @@ var importer = new FBXLoader();
 //var importerOBJ = new OBJLoader();
 var importerOBJ = new OBJLoader();
 
-
-
 // Podio teste
 importer.load('./Objetos/Bed.fbx', function (object) {
-
     object.traverse(function (child) 
     {
         if (child.isMesh) {
@@ -85,7 +82,7 @@ importer.load('./Objetos/Bed.fbx', function (object) {
     object.scale.x = 0.01;
     object.scale.y = 0.01;
     object.scale.z = 0.01;
-
+  
     object.position.x = -12.8;
     object.position.y = -0.5;
     object.position.z = -10.3;
@@ -176,15 +173,15 @@ function onDocumentKeyDown(event) {
         controls.moveForward(0.25);
     }
     //Comportamento para a tecla S
-    else if (keyCode == 83) {
+    if (keyCode == 83) {
         controls.moveForward(-0.25);
     }
     //Comportamento para a tecla A
-    else if (keyCode == 65) {
+    if (keyCode == 65) {
         controls.moveRight(-0.25);
     }
     //Comportamento para a tecla D
-    else if (keyCode == 68) {
+    if (keyCode == 68) {
         controls.moveRight(0.25);
     }
     //comportamento para a tecla C, para mudar entre as 2 câmaras
@@ -192,7 +189,7 @@ function onDocumentKeyDown(event) {
         mudarCamara();
     }
     //Comportamento para a tecla Barra de Espaço
-    else if (keyCode == 32) {
+    if (keyCode == 32) {
         //verificar se o cubo está presente na cena.
         //caso esteja, removemos. Caso contrário, adicionamos.
         if(meshCubo.parent == cena){
@@ -202,6 +199,233 @@ function onDocumentKeyDown(event) {
         }
     }
 };
+/********************************************************
+ *                     Frigorifico                      *    
+ * ******************************************************/
+var meshFridge;
+var doorMesh;
+var doorAnimation;
+var door2Mesh;
+
+
+
+function triggerdoor(mesh) {
+
+  if (mesh.userData.isopen == 0) {
+    doorAnimation = new TWEEN.Tween(mesh.rotation)
+    .to({ y: Math.PI / -2 }, 1000) // Rotate the door to 90 degrees (open position) in 1 second
+    .start()
+    .onComplete(function () {
+      mesh.userData.isopen = 1;
+    });
+  }else{
+    doorAnimation = new TWEEN.Tween(mesh.rotation)
+    .to({ y: 0 }, 1000) // Rotate the door to 0 degrees (closed position) in 1 second
+    .start()
+    .onComplete(function () {
+      mesh.userData.isopen = 0;
+    });
+  }
+}
+
+function closeDoorButton(mesh) {
+  if (doorState === "opened") {
+    doorAnimation = new TWEEN.Tween(mesh.rotation)
+    .to({ y: 0 }, 1000) // Rotate the door to 0 degrees (closed position) in 1 second
+    .start()
+    .onComplete(function () {
+      doorState = "closed";
+    });
+  }
+}
+
+function create_frigo(x,y,z){
+// create the main fridge mesh
+var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
+var texture = new THREE.TextureLoader().load('./Images/fridge_texture.jpg');
+var materialFridge = new THREE.MeshBasicMaterial({ map: texture });
+meshFridge = new THREE.Mesh(geometriaFridge, materialFridge);
+
+// create the fridge door mesh
+var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);  
+doorGeometry.translate( 0, 0, -0.55 );
+var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
+var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+doorMesh = new THREE.Mesh(doorGeometry, doorMaterial);
+// position the door mesh relative to the fridge mesh
+doorMesh.position.x = 1.2;
+doorMesh.position.y = -0.525;
+doorMesh.position.z = 0.55;
+doorMesh.userData.isopen = 0;
+meshFridge.add(doorMesh);
+
+//create door handle
+var handleGeometry=new THREE.BoxGeometry(0.1, 0.5, 0.1);
+var handleMaterial = new THREE.MeshBasicMaterial({ map: texture});
+var handleMesh= new THREE.Mesh(handleGeometry, handleMaterial);
+
+handleMesh.position.z=-1;
+handleMesh.position.x=0.1;
+
+doorMesh.add(handleMesh);
+
+
+
+// create the 2nd fridge door mesh
+var door2Geometry = new THREE.BoxGeometry(0.1, 1, 1.2);
+door2Geometry.translate( 0, 0, -0.55 );
+var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
+var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+door2Mesh = new THREE.Mesh(door2Geometry, doorMaterial);
+// position the 2nd door mesh relative to the fridge mesh
+door2Mesh.position.x = 1.2;
+door2Mesh.position.y = 1;
+door2Mesh.position.z = 0.55;
+door2Mesh.userData.isopen = 0;
+meshFridge.add(door2Mesh);
+
+
+//create 2nd door handle
+var handle2Geometry=new THREE.BoxGeometry(0.1, 0.3, 0.1);
+var handle2Material = new THREE.MeshBasicMaterial({ map: texture});
+var handle2Mesh= new THREE.Mesh(handle2Geometry, handle2Material);
+
+handle2Mesh.position.z=-1;
+handle2Mesh.position.x=0.1;
+
+door2Mesh.add(handle2Mesh);
+
+// create the side wall of fridge
+var wallGeometry = new THREE.BoxGeometry(0.1, 3, 1.1);
+var wallMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+// position the wall mesh relative to the fridge mesh
+wallMesh.position.x = 0.6;
+wallMesh.position.z= 0.55;
+wallMesh.rotation.y = Math.PI / 2; // rotate the wall mesh by 90 degrees around the y-axis
+
+meshFridge.add(wallMesh);
+
+// create the side wall of fridge
+var wall2Geometry = new THREE.BoxGeometry(0.1, 3, 1.1);
+var wallMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var wall2Mesh = new THREE.Mesh(wall2Geometry, wallMaterial);
+// position the wall mesh relative to the fridge mesh
+wall2Mesh.position.x = 0.6;
+wall2Mesh.position.z= -0.55;
+wall2Mesh.rotation.y = Math.PI / 2; // rotate the wall mesh by 90 degrees around the y-axis
+
+meshFridge.add(wall2Mesh);
+
+// create the roof of the fridge
+var roofGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+var roofMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
+// position the roof mesh above the fridge mesh
+roofMesh.position.y = 1.55;
+roofMesh.position.x=0.55;
+
+meshFridge.add(roofMesh);
+
+//create shelf5
+var shelf5Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf5Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf5Mesh= new THREE.Mesh(shelf5Geometry, shelf5Material);
+
+shelf5Mesh.position.y=1;
+shelf5Mesh.position.x=0.55;
+
+meshFridge.add(shelf5Mesh);
+
+//create shelf
+var shelfGeometry=new THREE.BoxGeometry(1.2, 0.1, 1.0);
+var shelfMaterial = new THREE.MeshBasicMaterial({ map: texture});
+var shelfMesh= new THREE.Mesh(shelfGeometry, shelfMaterial);
+
+shelfMesh.position.y=0.50;
+shelfMesh.position.x=0.55;
+
+meshFridge.add(shelfMesh);
+
+//create shelf2
+var shelf2Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf2Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf2Mesh= new THREE.Mesh(shelf2Geometry, shelf2Material);
+
+shelf2Mesh.position.y=0;
+shelf2Mesh.position.x=0.55;
+
+meshFridge.add(shelf2Mesh);
+
+//create shelf3
+var shelf3Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf3Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf3Mesh= new THREE.Mesh(shelf3Geometry, shelf3Material);
+
+shelf3Mesh.position.y=-0.50;
+shelf3Mesh.position.x=0.55;
+
+meshFridge.add(shelf3Mesh);
+
+//create shelf4
+var shelf4Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf4Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf4Mesh= new THREE.Mesh(shelf4Geometry, shelf4Material);
+
+shelf4Mesh.position.y=-1;
+shelf4Mesh.position.x=0.55;
+
+meshFridge.add(shelf4Mesh);
+
+
+// create the floor of the fridge
+var floorGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+var floorMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+// position the floor mesh below the fridge mesh
+floorMesh.position.y = -1.55;
+floorMesh.position.x=0.55;
+
+meshFridge.add(floorMesh);
+meshFridge.position.x=x;
+meshFridge.position.y=y;
+meshFridge.position.z=z;
+}
+
+
+function animate() {
+  requestAnimationFrame(animate);
+  TWEEN.update();
+  // Additional rendering or updating logic for your scene can be added here
+}
+
+animate();
+
+// create a raycaster object
+var raycaster = new THREE.Raycaster();
+
+// add a click event listener to the renderer
+renderer.domElement.addEventListener('click', onMouseClick);
+
+function onMouseClick(event) {
+  // calculate mouse position in normalized device coordinates
+  var mouse = new THREE.Vector2();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // set the raycaster position and direction based on the camera and mouse position
+  raycaster.setFromCamera(mouse, camaraPerspetiva);
+
+  // get the objects that intersect with the raycaster
+  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh]);
+
+  // if the ray intersects with the fridge door, toggle its state
+  // check if any object was intersected
+  if (intersects.length > 0) {
+      var intersectedObject = intersects[0].object;
+      triggerdoor(intersectedObject);
+    }
+  }
 
 //função para mudar entre as 2 câmaras
 function mudarCamara() {
@@ -291,7 +515,6 @@ var skybox = new THREE.Mesh(skyboxGeo, skyboxMaterial);
 //adicionar o skybox à cena
 cena.add(skybox);
 
-
 // BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
 /*var btnCamaras = document.getElementById('ChangeView');
 btnCamaras.onclick = function () 
@@ -311,6 +534,8 @@ btnCamaras.onclick = function ()
 */
 function Start() {
 
+    create_frigo(-10.25,1.1,-10);
+    cena.add(meshFridge);
     cena.add(meshCubo);
 
 
