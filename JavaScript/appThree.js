@@ -175,9 +175,7 @@ function onDocumentKeyDown(event) {
     if (keyCode == 68) {
         controls.moveRight(0.25);
     }
-    if (KeyCode == 81){
-        controls.move
-    }
+
     //Comportamento para a tecla Barra de Espaço
     if (keyCode == 32) {
         //verificar se o cubo está presente na cena.
@@ -194,46 +192,40 @@ function onDocumentKeyDown(event) {
  * ******************************************************/
 var meshFridge;
 var doorMesh;
-var doorState="closed";
+var doorAnimation;
 var door2Mesh;
-var door2State="closed";
 
-function openDoorButton() 
-{
-  // rotate the door mesh around the y-axis to open it
-  doorMesh.rotation.y = Math.PI / 2;
-  doorMesh.position.x = 1.75;
-  doorMesh.position.z=0.55;
-  doorState="opened";
-};
 
-function closeDoorButton() 
-{
-  // rotate the door mesh around the y-axis to close it
-  doorMesh.rotation.y = 0;
-  doorMesh.position.z=0;
-  doorMesh.position.x=1.2;
-  doorState="closed";
-};
 
-function openDoor2Button() 
-{
-  // rotate the door mesh around the y-axis to open it
-  door2Mesh.rotation.y = Math.PI / 2;
-  door2Mesh.position.x = 1.75;
-  door2Mesh.position.z=0.55;
-  door2State="opened";
-};
+function triggerdoor(mesh) {
 
-function closeDoor2Button() 
-{
-  // rotate the door mesh around the y-axis to close it
-  door2Mesh.rotation.y = 0;
-  door2Mesh.position.z=0;
-  door2Mesh.position.x=1.2;
-  door2State="closed";
-};
+  if (mesh.userData.isopen == 0) {
+    doorAnimation = new TWEEN.Tween(mesh.rotation)
+    .to({ y: Math.PI / -2 }, 1000) // Rotate the door to 90 degrees (open position) in 1 second
+    .start()
+    .onComplete(function () {
+      mesh.userData.isopen = 1;
+    });
+  }else{
+    doorAnimation = new TWEEN.Tween(mesh.rotation)
+    .to({ y: 0 }, 1000) // Rotate the door to 0 degrees (closed position) in 1 second
+    .start()
+    .onComplete(function () {
+      mesh.userData.isopen = 0;
+    });
+  }
+}
 
+function closeDoorButton(mesh) {
+  if (doorState === "opened") {
+    doorAnimation = new TWEEN.Tween(mesh.rotation)
+    .to({ y: 0 }, 1000) // Rotate the door to 0 degrees (closed position) in 1 second
+    .start()
+    .onComplete(function () {
+      doorState = "closed";
+    });
+  }
+}
 
 function create_frigo(x,y,z){
 // create the main fridge mesh
@@ -241,25 +233,55 @@ var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
 var texture = new THREE.TextureLoader().load('./Images/fridge_texture.jpg');
 var materialFridge = new THREE.MeshBasicMaterial({ map: texture });
 meshFridge = new THREE.Mesh(geometriaFridge, materialFridge);
+
 // create the fridge door mesh
-var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);
+var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);  
+doorGeometry.translate( 0, 0, -0.55 );
 var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
 var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
 doorMesh = new THREE.Mesh(doorGeometry, doorMaterial);
 // position the door mesh relative to the fridge mesh
 doorMesh.position.x = 1.2;
-doorMesh.position.y = -0.5
+doorMesh.position.y = -0.525;
+doorMesh.position.z = 0.55;
+doorMesh.userData.isopen = 0;
 meshFridge.add(doorMesh);
+
+//create door handle
+var handleGeometry=new THREE.BoxGeometry(0.1, 0.5, 0.1);
+var handleMaterial = new THREE.MeshBasicMaterial({ map: texture});
+var handleMesh= new THREE.Mesh(handleGeometry, handleMaterial);
+
+handleMesh.position.z=-1;
+handleMesh.position.x=0.1;
+
+doorMesh.add(handleMesh);
+
+
 
 // create the 2nd fridge door mesh
 var door2Geometry = new THREE.BoxGeometry(0.1, 1, 1.2);
+door2Geometry.translate( 0, 0, -0.55 );
 var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
 var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
 door2Mesh = new THREE.Mesh(door2Geometry, doorMaterial);
 // position the 2nd door mesh relative to the fridge mesh
 door2Mesh.position.x = 1.2;
 door2Mesh.position.y = 1;
+door2Mesh.position.z = 0.55;
+door2Mesh.userData.isopen = 0;
 meshFridge.add(door2Mesh);
+
+
+//create 2nd door handle
+var handle2Geometry=new THREE.BoxGeometry(0.1, 0.3, 0.1);
+var handle2Material = new THREE.MeshBasicMaterial({ map: texture});
+var handle2Mesh= new THREE.Mesh(handle2Geometry, handle2Material);
+
+handle2Mesh.position.z=-1;
+handle2Mesh.position.x=0.1;
+
+door2Mesh.add(handle2Mesh);
 
 // create the side wall of fridge
 var wallGeometry = new THREE.BoxGeometry(0.1, 3, 1.1);
@@ -293,8 +315,18 @@ roofMesh.position.x=0.55;
 
 meshFridge.add(roofMesh);
 
+//create shelf5
+var shelf5Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf5Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf5Mesh= new THREE.Mesh(shelf5Geometry, shelf5Material);
+
+shelf5Mesh.position.y=1;
+shelf5Mesh.position.x=0.55;
+
+meshFridge.add(shelf5Mesh);
+
 //create shelf
-var shelfGeometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelfGeometry=new THREE.BoxGeometry(1.2, 0.1, 1.0);
 var shelfMaterial = new THREE.MeshBasicMaterial({ map: texture});
 var shelfMesh= new THREE.Mesh(shelfGeometry, shelfMaterial);
 
@@ -349,6 +381,14 @@ meshFridge.position.z=z;
 }
 
 
+function animate() {
+  requestAnimationFrame(animate);
+  TWEEN.update();
+  // Additional rendering or updating logic for your scene can be added here
+}
+
+animate();
+
 // create a raycaster object
 var raycaster = new THREE.Raycaster();
 
@@ -370,26 +410,10 @@ function onMouseClick(event) {
   // if the ray intersects with the fridge door, toggle its state
   // check if any object was intersected
   if (intersects.length > 0) {
-    var intersectedObject = intersects[0].object;
-
-    if (intersectedObject === doorMesh) {
-      // if the intersected object is the first door, toggle its state
-      if (doorState === "closed") {
-        openDoorButton();
-      } else {
-        closeDoorButton();
-      }
-    } else if (intersectedObject === door2Mesh) {
-      // if the intersected object is the second door, toggle its state
-      if (door2State === "closed") {
-        openDoor2Button();
-      } else {
-        closeDoor2Button();
-      }
+      var intersectedObject = intersects[0].object;
+      triggerdoor(intersectedObject);
     }
-    
   }
-}
 
 /********************************************************
  *                          SKYBOX                      *    
@@ -487,3 +511,4 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+
