@@ -34,6 +34,16 @@ var materialTextura = new THREE.MeshStandardMaterial({ map: textura });
 var meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
 meshCubo.translateZ(-6.0);
 
+/********************************************************
+                    GRID HELPER
+*********************************************************/
+
+const size = 100;
+const divisions = 100;
+
+const gridHelper = new THREE.GridHelper( size, divisions );
+cena.add( gridHelper );
+
 
 /********************************************************
 Código base para importação de objetos 3D em formato FBX
@@ -74,9 +84,9 @@ importer.load('./Objetos/Bed.fbx', function (object) {
     object.scale.y = 0.01;
     object.scale.z = 0.01;
 
-    object.position.x = 0;
+    object.position.x = -12.8;
     object.position.y = -0.5;
-    object.position.z = -6.0;
+    object.position.z = -10.3;
     
     objectImportado = object; 
 
@@ -124,9 +134,9 @@ importer.load('./Objetos/SimpleHouse.fbx', function (object) {
     object.scale.y = 0.002;
     object.scale.z = 0.002;
 
-    object.position.x = 1.5;
+    object.position.x = 0;
     object.position.y = -0.5;
-    object.position.z = -6.0;
+    object.position.z = 1;
    
     objetoImportado = object;
 });
