@@ -228,17 +228,6 @@ function triggerdoor(mesh) {
   }
 }
 
-function closeDoorButton(mesh) {
-  if (doorState === "opened") {
-    doorAnimation = new TWEEN.Tween(mesh.rotation)
-    .to({ y: 0 }, 1000) // Rotate the door to 0 degrees (closed position) in 1 second
-    .start()
-    .onComplete(function () {
-      doorState = "closed";
-    });
-  }
-}
-
 function create_frigo(x,y,z){
 // create the main fridge mesh
 var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
