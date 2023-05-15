@@ -16,6 +16,8 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
+var camaraselecionada=1;
+
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
 camaraPerspetiva.position.set(0, 1.6, 0); // Adicionar height à câmara
 
@@ -185,6 +187,10 @@ function onDocumentKeyDown(event) {
     else if (keyCode == 68) {
         controls.moveRight(0.25);
     }
+    //comportamento para a tecla C, para mudar entre as 2 câmaras
+    else if (keyCode == 67) {   
+        mudarCamara();
+    }
     //Comportamento para a tecla Barra de Espaço
     else if (keyCode == 32) {
         //verificar se o cubo está presente na cena.
@@ -197,9 +203,19 @@ function onDocumentKeyDown(event) {
     }
 };
 
+//função para mudar entre as 2 câmaras
+function mudarCamara() {
+    if (camaraselecionada == 1)
+        camaraselecionada = 0;
+    else
+        camaraselecionada = 1;
+};
+
 /********************************************************
  *                          SKYBOX                      *    
  * ******************************************************/
+
+/*código default
 
 //Carregamento de texturas para as variáveis
 var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
@@ -231,9 +247,49 @@ var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 
 //adicionar o skybox à cena
+cena.add(skybox);*/
+
+
+function createPathStrings(filename)
+{
+    var path = "./Skybox/";
+    var baseFileName = path + filename;
+    var format = ".tga";
+    var sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+    var pathStrings = sides.map(function(side) {
+        return baseFileName + "_" + side + format;
+    });
+    return pathStrings;
+}//isto deve criar um array de strings com o path de cada imagem do género ['./SkyBox/stormydays_ft.tga', './SkyBox/stormydays_bk.tga', ...]
+
+//agora temos de dar load de cada textura usando o TextureLoader.load().
+//Para isso, vamos usar a função map() que vai percorrer o array de strings e carregar cada uma das texturas.
+
+function createMaterialArray(filename){
+    var skyboxImagepaths = createPathStrings(filename);
+    var textureLoader = new THREE.TextureLoader();
+    var materialArray = skyboxImagepaths.map(function(image){
+        let texture = new THREE.TextureLoader().load(image);
+
+        return new THREE.MeshBasicMaterial({map: texture, side: THREE.BackSide});
+    });
+
+    return materialArray;
+}
+
+//Criação do array de materiais que vai conter as texturas
+var materialArray = createMaterialArray('stormydays');
+
+//Criação da geometria do skybox
+var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
+
+var skyboxMaterial = new THREE.MeshStandardMaterial(materialArray);
+
+//Criação da mesh que vai conter a geometria e as texturas
+var skybox = new THREE.Mesh(skyboxGeo, skyboxMaterial);
+
+//adicionar o skybox à cena
 cena.add(skybox);
-
-
 
 
 // BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
