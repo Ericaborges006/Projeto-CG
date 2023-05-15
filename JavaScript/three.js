@@ -41326,7 +41326,17 @@ console.warn( 'Scripts "build/three.js" and "build/three.min.js" are deprecated 
 	const _projScreenMatrix$1 = /*@__PURE__*/ new Matrix4();
 	const _lightPositionWorld$1 = /*@__PURE__*/ new Vector3();
 	const _lookTarget$1 = /*@__PURE__*/ new Vector3();
-
+	if (this._cameraState.type == CameraMode.Perspective) {
+		this._mainCamera = this._perspectiveCamera;
+		this._mainCamera.position.copy(this._orthographicCamera.position);
+		this._mainCamera.rotation.copy(this._orthographicCamera.rotation);
+	  } else if (this._cameraState.type == CameraMode.Orthographic) {
+		this._mainCamera = this._orthographicCamera;
+		this._mainCamera.position.copy(this._perspectiveCamera.position);
+		this._mainCamera.rotation.copy(this._perspectiveCamera.rotation);
+	  }
+	
+	  this._control.object = this._mainCamera;
 	class LightShadow {
 
 		constructor( camera ) {

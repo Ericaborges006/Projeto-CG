@@ -5,7 +5,9 @@ import * as THREE from 'three';
 import { FBXLoader } from 'FBXLoader';
 
 //Importação da biblioteca que nos permite explorar a nossa cena através do importmap
-import { PointerLockControls } from 'PointerLockControls';
+import{PointerLockControls} from 'PointerLockControls';
+
+import { OBJLoader } from 'OBJLoader';
 
 
 document.addEventListener("DOMContentLoaded", Start);
@@ -15,6 +17,9 @@ var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
+camaraPerspetiva.position.set(0, 1.6, 0); // Adicionar height à câmara
+
+camara.updateProjectionMatrix();
 
 renderer.setSize(window.innerWidth - 15, window.innerHeight - 80);
 renderer.setClearColor(0xaaaaaa);
@@ -46,44 +51,84 @@ var relogio = new THREE.Clock();
 //variável com o objeto responsável por importar ficheiros FBX
 var importer = new FBXLoader();
 
-importer.load('./Objetos/Samba Dancing.fbx', function (object) {
+//var importerOBJ = new OBJLoader();
+var importerOBJ = new OBJLoader();
 
-    //o mixerAnimacao é inicializado tendo em conta o objeto importado
-    mixerAnimacao = new THREE.AnimationMixer(object);
 
-    //object.animations é um array com todas as animações que o objeto trás quando é importado
-    //o que fazemos é criar uma ação de animação tendo em conta a animação que é pretendida
-    //de seguida é inicializada a reporodução da animação
-    var action = mixerAnimacao.clipAction(object.animations[0]);
-    action.play();
 
-    //object.traverse é uma função que percorre todos os filhos desse mesmo objeto.
-    //o primeiro e único parâmetro da função é um anova função que deve ser chamada para cada filho.
-    //neste caso, o que nós fazemos é ver se o filho tem uma mesh e, no caso de ter,
-    //é indicado a esse objeto que deve permitir e projetar e receber sombras, respetivamente.
-    object.traverse(function (child) {
+// Podio teste
+importer.load('./Objetos/Bed.fbx', function (object) {
+
+    object.traverse(function (child) 
+    {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
         }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
+
+    object.position.x = 0;
+    object.position.y = -0.5;
+    object.position.z = -6.0;
+    
+    objectImportado = object; 
+
 });
 
-//adiciona o objeto importado à cena
-cena.add(object);	
+//var importer = new THREE.OBJLoader();
+importer.load('./Objetos/Podium.obj', function (object) {
 
-//quando o objeto é importado, esta tem uma escala de 1 nos 3 eixos (XYZ). Uma vez que
-//este é demasiado grande, mudamos a escala deste projeto para ter 0.01 em todos os eixos.
-object.scale.x = 0.01;
-object.scale.y = 0.01;
-object.scale.z = 0.01;
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    
+    });
+ 
+    cena.add(object);	
 
-//Mudamos a posição do objeto importado para que este não fique na mesma posição que o cubo.
-object.position.x = 1.5;
-object.position.y = -0.5;
-object.position.z = -6.0;
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
 
-//Guardamos o objeto importado na variável objetoImportado.
-objetoImportado = object;
+    object.position.x = 0;
+    object.position.y = 2;
+    object.position.z = -6.0;
+    
+    objectImportado = object; 
+
+});
+
+importer.load('./Objetos/SimpleHouse.fbx', function (object) {
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+
+    cena.add(object);	
+
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = 1.5;
+    object.position.y = -0.5;
+    object.position.z = -6.0;
+   
+    objetoImportado = object;
 });
 
 
@@ -147,12 +192,12 @@ function onDocumentKeyDown(event) {
  * ******************************************************/
 
 //Carregamento de texturas para as variáveis
-/*var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
+var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
 var texture_esq = new THREE.TextureLoader().load('./Skybox/negx.jpg');      //imagem da esquerda
 var texture_up = new THREE.TextureLoader().load('./Skybox/posy.jpg');      //imagem de cima
 var texture_dn = new THREE.TextureLoader().load('./Skybox/negy.jpg');      //imagem de baixo
 var texture_bk = new THREE.TextureLoader().load('./Skybox/posz.jpg');      //imagem de trás
-var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');     //imagem da frente
+var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');      //imagem da frente
 
 //array que vai armazenar as texturas
 var materialArray = [];
@@ -168,43 +213,9 @@ materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
 //ciclo para fazer com que as texturas do array sejam aplicadas na parte inferior do cubo
 for (var i = 0; i < 6; i++)
     materialArray[i].side = THREE.BackSide;
-*/
-
-
-//Em vez de criar 6 variáveis para guardar as texturas, podemos criar uma função reutilizável qur dá loop pelas imagens.
-//A função createPathStrings() recebe como parâmetro o file image name, filename
-
-function createPathStrings(filename)
-{
-    var path = "./Skybox/";
-    var baseFileName = path + filename;
-    var format = ".tga";
-    var sides = ["ft", "bk", "up", "dn", "rt", "lf"];
-    var pathStrings = sides.map(function(side) {
-        return baseFileName + "_" + side + format;} );
-    
-    return pathStrings;
-}//isto deve criar um array de strings com o path de cada imagem do género ['./SkyBox/stormydays_ft.tga', './SkyBox/stormydays_bk.tga', ...]
-
-//agora temos de dar load de cada textura usando o TextureLoader.load().
-//Para isso, vamos usar a função map() que vai percorrer o array de strings e carregar cada uma das texturas.
-
-function createMaterialArray(filename){
-    var skyboxImagepaths = createPathStrings(filename);
-    var materialArray = skyboxImagepaths.map(function(image){
-        let texture = new THREE.TextureLoader().load(image);
-
-        return new THREE.MeshBasicMaterial({map: texture, side: THREE.BackSide});
-    });
-
-    return materialArray;
-}
-
-//Criação do array de materiais que vai conter as texturas
-var materialArray = createMaterialArray('stormydays');
 
 //Criação da geometria do skybox
-var skyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000);
+var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
 
 //Criação da mesh que vai conter a geometria e as texturas
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
@@ -213,9 +224,29 @@ var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 cena.add(skybox);
 
 
+
+
+// BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
+/*var btnCamaras = document.getElementById('ChangeView');
+btnCamaras.onclick = function () 
+{
+    if (this._cameraState.type == CameraMode.Perspective) {
+        this._mainCamera = this._perspectiveCamera;
+        this._mainCamera.position.copy(this._orthographicCamera.position);
+        this._mainCamera.rotation.copy(this._orthographicCamera.rotation);
+      } else if (this._cameraState.type == CameraMode.Orthographic) {
+        this._mainCamera = this._orthographicCamera;
+        this._mainCamera.position.copy(this._perspectiveCamera.position);
+        this._mainCamera.rotation.copy(this._perspectiveCamera.rotation);
+      }
+    
+      this._control.object = this._mainCamera;
+}
+*/
 function Start() {
 
     cena.add(meshCubo);
+
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
     var focoLuz = new THREE.SpotLight(0xffffff, 1);
@@ -232,7 +263,7 @@ function Start() {
 
 
     renderer.render(cena, camaraPerspetiva);
-    
+
     requestAnimationFrame(loop);
 }
 
@@ -250,4 +281,3 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
-
