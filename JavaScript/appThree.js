@@ -5,7 +5,9 @@ import * as THREE from 'three';
 import { FBXLoader } from 'FBXLoader';
 
 //Importação da biblioteca que nos permite explorar a nossa cena através do importmap
-import { PointerLockControls } from 'PointerLockControls';
+import{PointerLockControls} from 'PointerLockControls';
+
+import { OBJLoader } from 'OBJLoader';
 
 
 document.addEventListener("DOMContentLoaded", Start);
@@ -15,6 +17,9 @@ var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
+camaraPerspetiva.position.set(0, 1.6, 0); // Adicionar height à câmara
+
+camara.updateProjectionMatrix();
 
 renderer.setSize(window.innerWidth - 15, window.innerHeight - 80);
 renderer.setClearColor(0xaaaaaa);
@@ -46,44 +51,84 @@ var relogio = new THREE.Clock();
 //variável com o objeto responsável por importar ficheiros FBX
 var importer = new FBXLoader();
 
-importer.load('./Objetos/Samba Dancing.fbx', function (object) {
+//var importerOBJ = new OBJLoader();
+var importerOBJ = new OBJLoader();
 
-    //o mixerAnimacao é inicializado tendo em conta o objeto importado
-    mixerAnimacao = new THREE.AnimationMixer(object);
 
-    //object.animations é um array com todas as animações que o objeto trás quando é importado
-    //o que fazemos é criar uma ação de animação tendo em conta a animação que é pretendida
-    //de seguida é inicializada a reporodução da animação
-    var action = mixerAnimacao.clipAction(object.animations[0]);
-    action.play();
 
-    //object.traverse é uma função que percorre todos os filhos desse mesmo objeto.
-    //o primeiro e único parâmetro da função é um anova função que deve ser chamada para cada filho.
-    //neste caso, o que nós fazemos é ver se o filho tem uma mesh e, no caso de ter,
-    //é indicado a esse objeto que deve permitir e projetar e receber sombras, respetivamente.
-    object.traverse(function (child) {
+// Podio teste
+importer.load('./Objetos/Bed.fbx', function (object) {
+
+    object.traverse(function (child) 
+    {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
         }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
+
+    object.position.x = 0;
+    object.position.y = -0.5;
+    object.position.z = -6.0;
+    
+    objectImportado = object; 
+
 });
 
-//adiciona o objeto importado à cena
-cena.add(object);	
+//var importer = new THREE.OBJLoader();
+importer.load('./Objetos/Podium.obj', function (object) {
 
-//quando o objeto é importado, esta tem uma escala de 1 nos 3 eixos (XYZ). Uma vez que
-//este é demasiado grande, mudamos a escala deste projeto para ter 0.01 em todos os eixos.
-object.scale.x = 0.01;
-object.scale.y = 0.01;
-object.scale.z = 0.01;
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    
+    });
+ 
+    cena.add(object);	
 
-//Mudamos a posição do objeto importado para que este não fique na mesma posição que o cubo.
-object.position.x = 1.5;
-object.position.y = -0.5;
-object.position.z = -6.0;
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
 
-//Guardamos o objeto importado na variável objetoImportado.
-objetoImportado = object;
+    object.position.x = 0;
+    object.position.y = 2;
+    object.position.z = -6.0;
+    
+    objectImportado = object; 
+
+});
+
+importer.load('./Objetos/SimpleHouse.fbx', function (object) {
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+
+    cena.add(object);	
+
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = 1.5;
+    object.position.y = -0.5;
+    object.position.z = -6.0;
+   
+    objetoImportado = object;
 });
 
 
@@ -119,19 +164,22 @@ function onDocumentKeyDown(event) {
         controls.moveForward(0.25);
     }
     //Comportamento para a tecla S
-    else if (keyCode == 83) {
+    if (keyCode == 83) {
         controls.moveForward(-0.25);
     }
     //Comportamento para a tecla A
-    else if (keyCode == 65) {
+    if (keyCode == 65) {
         controls.moveRight(-0.25);
     }
     //Comportamento para a tecla D
-    else if (keyCode == 68) {
+    if (keyCode == 68) {
         controls.moveRight(0.25);
     }
+    if (KeyCode == 81){
+        controls.move
+    }
     //Comportamento para a tecla Barra de Espaço
-    else if (keyCode == 32) {
+    if (keyCode == 32) {
         //verificar se o cubo está presente na cena.
         //caso esteja, removemos. Caso contrário, adicionamos.
         if(meshCubo.parent == cena){
@@ -141,18 +189,219 @@ function onDocumentKeyDown(event) {
         }
     }
 };
+/********************************************************
+ *                     Frigorifico                      *    
+ * ******************************************************/
+var meshFridge;
+var doorMesh;
+var doorState="closed";
+var door2Mesh;
+var door2State="closed";
+
+function openDoorButton() 
+{
+  // rotate the door mesh around the y-axis to open it
+  doorMesh.rotation.y = Math.PI / 2;
+  doorMesh.position.x = 1.75;
+  doorMesh.position.z=0.55;
+  doorState="opened";
+};
+
+function closeDoorButton() 
+{
+  // rotate the door mesh around the y-axis to close it
+  doorMesh.rotation.y = 0;
+  doorMesh.position.z=0;
+  doorMesh.position.x=1.2;
+  doorState="closed";
+};
+
+function openDoor2Button() 
+{
+  // rotate the door mesh around the y-axis to open it
+  door2Mesh.rotation.y = Math.PI / 2;
+  door2Mesh.position.x = 1.75;
+  door2Mesh.position.z=0.55;
+  door2State="opened";
+};
+
+function closeDoor2Button() 
+{
+  // rotate the door mesh around the y-axis to close it
+  door2Mesh.rotation.y = 0;
+  door2Mesh.position.z=0;
+  door2Mesh.position.x=1.2;
+  door2State="closed";
+};
+
+
+function create_frigo(x,y,z){
+// create the main fridge mesh
+var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
+var texture = new THREE.TextureLoader().load('./Images/fridge_texture.jpg');
+var materialFridge = new THREE.MeshBasicMaterial({ map: texture });
+meshFridge = new THREE.Mesh(geometriaFridge, materialFridge);
+// create the fridge door mesh
+var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);
+var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
+var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+doorMesh = new THREE.Mesh(doorGeometry, doorMaterial);
+// position the door mesh relative to the fridge mesh
+doorMesh.position.x = 1.2;
+doorMesh.position.y = -0.5
+meshFridge.add(doorMesh);
+
+// create the 2nd fridge door mesh
+var door2Geometry = new THREE.BoxGeometry(0.1, 1, 1.2);
+var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
+var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+door2Mesh = new THREE.Mesh(door2Geometry, doorMaterial);
+// position the 2nd door mesh relative to the fridge mesh
+door2Mesh.position.x = 1.2;
+door2Mesh.position.y = 1;
+meshFridge.add(door2Mesh);
+
+// create the side wall of fridge
+var wallGeometry = new THREE.BoxGeometry(0.1, 3, 1.1);
+var wallMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+// position the wall mesh relative to the fridge mesh
+wallMesh.position.x = 0.6;
+wallMesh.position.z= 0.55;
+wallMesh.rotation.y = Math.PI / 2; // rotate the wall mesh by 90 degrees around the y-axis
+
+meshFridge.add(wallMesh);
+
+// create the side wall of fridge
+var wall2Geometry = new THREE.BoxGeometry(0.1, 3, 1.1);
+var wallMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var wall2Mesh = new THREE.Mesh(wall2Geometry, wallMaterial);
+// position the wall mesh relative to the fridge mesh
+wall2Mesh.position.x = 0.6;
+wall2Mesh.position.z= -0.55;
+wall2Mesh.rotation.y = Math.PI / 2; // rotate the wall mesh by 90 degrees around the y-axis
+
+meshFridge.add(wall2Mesh);
+
+// create the roof of the fridge
+var roofGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+var roofMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
+// position the roof mesh above the fridge mesh
+roofMesh.position.y = 1.55;
+roofMesh.position.x=0.55;
+
+meshFridge.add(roofMesh);
+
+//create shelf
+var shelfGeometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelfMaterial = new THREE.MeshBasicMaterial({ map: texture});
+var shelfMesh= new THREE.Mesh(shelfGeometry, shelfMaterial);
+
+shelfMesh.position.y=0.50;
+shelfMesh.position.x=0.55;
+
+meshFridge.add(shelfMesh);
+
+//create shelf2
+var shelf2Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf2Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf2Mesh= new THREE.Mesh(shelf2Geometry, shelf2Material);
+
+shelf2Mesh.position.y=0;
+shelf2Mesh.position.x=0.55;
+
+meshFridge.add(shelf2Mesh);
+
+//create shelf3
+var shelf3Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf3Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf3Mesh= new THREE.Mesh(shelf3Geometry, shelf3Material);
+
+shelf3Mesh.position.y=-0.50;
+shelf3Mesh.position.x=0.55;
+
+meshFridge.add(shelf3Mesh);
+
+//create shelf4
+var shelf4Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
+var shelf4Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf4Mesh= new THREE.Mesh(shelf4Geometry, shelf4Material);
+
+shelf4Mesh.position.y=-1;
+shelf4Mesh.position.x=0.55;
+
+meshFridge.add(shelf4Mesh);
+
+
+// create the floor of the fridge
+var floorGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+var floorMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+// position the floor mesh below the fridge mesh
+floorMesh.position.y = -1.55;
+floorMesh.position.x=0.55;
+
+meshFridge.add(floorMesh);
+meshFridge.position.x=x;
+meshFridge.position.y=y;
+meshFridge.position.z=z;
+}
+
+
+// create a raycaster object
+var raycaster = new THREE.Raycaster();
+
+// add a click event listener to the renderer
+renderer.domElement.addEventListener('click', onMouseClick);
+
+function onMouseClick(event) {
+  // calculate mouse position in normalized device coordinates
+  var mouse = new THREE.Vector2();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  // set the raycaster position and direction based on the camera and mouse position
+  raycaster.setFromCamera(mouse, camaraPerspetiva);
+
+  // get the objects that intersect with the raycaster
+  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh]);
+
+  // if the ray intersects with the fridge door, toggle its state
+  // check if any object was intersected
+  if (intersects.length > 0) {
+    var intersectedObject = intersects[0].object;
+
+    if (intersectedObject === doorMesh) {
+      // if the intersected object is the first door, toggle its state
+      if (doorState === "closed") {
+        openDoorButton();
+      } else {
+        closeDoorButton();
+      }
+    } else if (intersectedObject === door2Mesh) {
+      // if the intersected object is the second door, toggle its state
+      if (door2State === "closed") {
+        openDoor2Button();
+      } else {
+        closeDoor2Button();
+      }
+    }
+    
+  }
+}
 
 /********************************************************
  *                          SKYBOX                      *    
  * ******************************************************/
 
 //Carregamento de texturas para as variáveis
-/*var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
+var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
 var texture_esq = new THREE.TextureLoader().load('./Skybox/negx.jpg');      //imagem da esquerda
 var texture_up = new THREE.TextureLoader().load('./Skybox/posy.jpg');      //imagem de cima
 var texture_dn = new THREE.TextureLoader().load('./Skybox/negy.jpg');      //imagem de baixo
 var texture_bk = new THREE.TextureLoader().load('./Skybox/posz.jpg');      //imagem de trás
-var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');     //imagem da frente
+var texture_ft = new THREE.TextureLoader().load('./Skybox/negz.jpg');      //imagem da frente
 
 //array que vai armazenar as texturas
 var materialArray = [];
@@ -168,43 +417,9 @@ materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
 //ciclo para fazer com que as texturas do array sejam aplicadas na parte inferior do cubo
 for (var i = 0; i < 6; i++)
     materialArray[i].side = THREE.BackSide;
-*/
-
-
-//Em vez de criar 6 variáveis para guardar as texturas, podemos criar uma função reutilizável qur dá loop pelas imagens.
-//A função createPathStrings() recebe como parâmetro o file image name, filename
-
-function createPathStrings(filename)
-{
-    var path = "./Skybox/";
-    var baseFileName = path + filename;
-    var format = ".tga";
-    var sides = ["ft", "bk", "up", "dn", "rt", "lf"];
-    var pathStrings = sides.map(function(side) {
-        return baseFileName + "_" + side + format;} );
-    
-    return pathStrings;
-}//isto deve criar um array de strings com o path de cada imagem do género ['./SkyBox/stormydays_ft.tga', './SkyBox/stormydays_bk.tga', ...]
-
-//agora temos de dar load de cada textura usando o TextureLoader.load().
-//Para isso, vamos usar a função map() que vai percorrer o array de strings e carregar cada uma das texturas.
-
-function createMaterialArray(filename){
-    var skyboxImagepaths = createPathStrings(filename);
-    var materialArray = skyboxImagepaths.map(function(image){
-        let texture = new THREE.TextureLoader().load(image);
-
-        return new THREE.MeshBasicMaterial({map: texture, side: THREE.BackSide});
-    });
-
-    return materialArray;
-}
-
-//Criação do array de materiais que vai conter as texturas
-var materialArray = createMaterialArray('stormydays');
 
 //Criação da geometria do skybox
-var skyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000);
+var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
 
 //Criação da mesh que vai conter a geometria e as texturas
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
@@ -213,9 +428,31 @@ var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 cena.add(skybox);
 
 
+
+
+// BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
+/*var btnCamaras = document.getElementById('ChangeView');
+btnCamaras.onclick = function () 
+{
+    if (this._cameraState.type == CameraMode.Perspective) {
+        this._mainCamera = this._perspectiveCamera;
+        this._mainCamera.position.copy(this._orthographicCamera.position);
+        this._mainCamera.rotation.copy(this._orthographicCamera.rotation);
+      } else if (this._cameraState.type == CameraMode.Orthographic) {
+        this._mainCamera = this._orthographicCamera;
+        this._mainCamera.position.copy(this._perspectiveCamera.position);
+        this._mainCamera.rotation.copy(this._perspectiveCamera.rotation);
+      }
+    
+      this._control.object = this._mainCamera;
+}
+*/
 function Start() {
 
+    create_frigo(-10.25,1.1,-10);
+    cena.add(meshFridge);
     cena.add(meshCubo);
+
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
     var focoLuz = new THREE.SpotLight(0xffffff, 1);
@@ -232,7 +469,7 @@ function Start() {
 
 
     renderer.render(cena, camaraPerspetiva);
-    
+
     requestAnimationFrame(loop);
 }
 
@@ -250,4 +487,3 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
-
