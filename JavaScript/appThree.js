@@ -16,7 +16,7 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
-var camaraselecionada=1;
+let isPerspectiveCameraActive = true;
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
 camaraPerspetiva.position.set(0, 1.6, 0); // Adicionar height à câmara
@@ -140,6 +140,26 @@ importer.load('./Objetos/SimpleHouse.fbx', function (object) {
     objetoImportado = object;
 });
 
+//função para mudar entre as 2 câmaras
+function mudarCamara() {
+    isPerspectiveCameraActive = !isPerspectiveCameraActive;
+  
+    // Set the active camera
+    if (isPerspectiveCameraActive) {
+      camara.position.copy(camaraPerspetiva.position);
+      camara.rotation.copy(camaraPerspetiva.rotation);
+      renderer.render(cena, camaraPerspetiva);
+    } else {
+      camaraPerspetiva.position.copy(camara.position);
+      camaraPerspetiva.rotation.copy(camara.rotation);
+      renderer.render(cena, camara);
+    }
+}
+
+//função para ligar e desligar as luzes
+function toggleLight(light) {
+    light.visible = !light.visible;
+}
 
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
@@ -185,7 +205,7 @@ function onDocumentKeyDown(event) {
         controls.moveRight(0.25);
     }
     //comportamento para a tecla C, para mudar entre as 2 câmaras
-    else if (keyCode == 67) {   
+    if (keyCode == 67) {   
         mudarCamara();
     }
     //Comportamento para a tecla Barra de Espaço
@@ -198,7 +218,18 @@ function onDocumentKeyDown(event) {
             cena.add(meshCubo);
         }
     }
+    //Lógica para ligar/desligar as luzes
+    if (keyCode == 49) {    //press 1
+        toggleLight(luzAmbiente);
+    }
+    else if(keyCode == 50){ //press 2
+        toggleLight(luzDirecional);
+    }
+    else if(keyCode == 51){ //press 3
+        toggleLight(luzPontual);
+    }
 };
+
 /********************************************************
  *                     Frigorifico                      *    
  * ******************************************************/
@@ -416,13 +447,7 @@ function onMouseClick(event) {
     }
   }
 
-//função para mudar entre as 2 câmaras
-function mudarCamara() {
-    if (camaraselecionada == 1)
-        camaraselecionada = 0;
-    else
-        camaraselecionada = 1;
-};
+
 
 /********************************************************
  *                          SKYBOX                      *    
@@ -521,6 +546,7 @@ btnCamaras.onclick = function ()
       this._control.object = this._mainCamera;
 }
 */
+
 function Start() {
 
     create_frigo(-10.25,1.1,-10);
@@ -541,6 +567,20 @@ function Start() {
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
 
+    //luz ambiente
+    var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
+    cena.add(luzAmbiente);
+    
+    //luz direcional
+    var luzDirecional = new THREE.DirectionalLight(0xffffff, 0.5);
+        //ligeiramente acima de cena para que os raios entrem na cena de cima para baixo
+        luzDirecional.position.set(0, 1, 0);
+    cena.add(luzDirecional);
+
+    //luz pontual
+    var luzPontual = new THREE.PointLight(0xffffff, 0.5);
+    luzPontual.position.set(0, 1, 0);
+    cena.add(luzPontual);
 
     renderer.render(cena, camaraPerspetiva);
 
