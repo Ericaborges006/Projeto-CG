@@ -16,7 +16,7 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
-let isPerspectiveCameraActive = true;
+var camaraselecionada=1;
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
 camaraPerspetiva.position.set(0, 1.6, 0); // Adicionar height à câmara
@@ -66,100 +66,43 @@ var importer = new FBXLoader();
 //var importerOBJ = new OBJLoader();
 var importerOBJ = new OBJLoader();
 
-// Podio teste
-importer.load('./Objetos/Bed.fbx', function (object) {
-    object.traverse(function (child) 
-    {
+
+
+importer.load('./Objetos/tudo.fbx', function (object) {
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load('./Images/Colors.png');
+    const material = new THREE.MeshStandardMaterial({ map: texture });
+
+
+    object.traverse(function (child) {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
+            child.material = material;
+            // Increase the roughness value to make the material less reflective
+            child.material.roughness = 1;
+
+            // Adjust the metalness value to control how much the material reflects light
+            child.material.metalness = 0;
         }
-    
     });
- 
-    cena.add(object);	
 
-    object.scale.x = 0.01;
-    object.scale.y = 0.01;
-    object.scale.z = 0.01;
-  
-    object.position.x = -12.8;
-    object.position.y = -0.5;
-    object.position.z = -10.3;
     
-    objectImportado = object; 
 
-});
+    cena.add(object);
 
-//var importer = new THREE.OBJLoader();
-importer.load('./Objetos/Podium.obj', function (object) {
+    object.rotation.y = Math.PI / 2; 
 
-    object.traverse(function (child) 
-    {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        }
-    
-    });
- 
-    cena.add(object);	
-
-    object.scale.x = 0.01;
-    object.scale.y = 0.01;
-    object.scale.z = 0.01;
+    object.scale.x = 0.015;
+    object.scale.y = 0.015;
+    object.scale.z = 0.015;
 
     object.position.x = 0;
-    object.position.y = 2;
-    object.position.z = -6.0;
-    
-    objectImportado = object; 
+    object.position.y = 0;
+    object.position.z = 0   ;
 
-});
-
-importer.load('./Objetos/SimpleHouse.fbx', function (object) {
-
-    object.traverse(function (child) 
-    {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        }
-    });
-
-    cena.add(object);	
-
-    object.scale.x = 0.002;
-    object.scale.y = 0.002;
-    object.scale.z = 0.002;
-
-    object.position.x = 0;
-    object.position.y = -0.5;
-    object.position.z = 1;
-   
     objetoImportado = object;
 });
-
-//função para mudar entre as 2 câmaras
-function mudarCamara() {
-    isPerspectiveCameraActive = !isPerspectiveCameraActive;
-  
-    // Set the active camera
-    if (isPerspectiveCameraActive) {
-      camara.position.copy(camaraPerspetiva.position);
-      camara.rotation.copy(camaraPerspetiva.rotation);
-      renderer.render(cena, camaraPerspetiva);
-    } else {
-      camaraPerspetiva.position.copy(camara.position);
-      camaraPerspetiva.rotation.copy(camara.rotation);
-      renderer.render(cena, camara);
-    }
-}
-
-//função para ligar e desligar as luzes
-function toggleLight(light) {
-    light.visible = !light.visible;
-}
 
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
@@ -205,7 +148,7 @@ function onDocumentKeyDown(event) {
         controls.moveRight(0.25);
     }
     //comportamento para a tecla C, para mudar entre as 2 câmaras
-    if (keyCode == 67) {   
+    else if (keyCode == 67) {   
         mudarCamara();
     }
     //Comportamento para a tecla Barra de Espaço
@@ -218,18 +161,7 @@ function onDocumentKeyDown(event) {
             cena.add(meshCubo);
         }
     }
-    //Lógica para ligar/desligar as luzes
-    if (keyCode == 49) {    //press 1
-        toggleLight(luzAmbiente);
-    }
-    else if(keyCode == 50){ //press 2
-        toggleLight(luzDirecional);
-    }
-    else if(keyCode == 51){ //press 3
-        toggleLight(luzPontual);
-    }
 };
-
 /********************************************************
  *                     Frigorifico                      *    
  * ******************************************************/
@@ -447,7 +379,13 @@ function onMouseClick(event) {
     }
   }
 
-
+//função para mudar entre as 2 câmaras
+function mudarCamara() {
+    if (camaraselecionada == 1)
+        camaraselecionada = 0;
+    else
+        camaraselecionada = 1;
+};
 
 /********************************************************
  *                          SKYBOX                      *    
@@ -546,10 +484,9 @@ btnCamaras.onclick = function ()
       this._control.object = this._mainCamera;
 }
 */
-
 function Start() {
 
-    create_frigo(-10.25,1.1,-10);
+    create_frigo(-11.75,1.1,-2);
     cena.add(meshFridge);
     cena.add(meshCubo);
 
@@ -567,20 +504,6 @@ function Start() {
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
 
-    //luz ambiente
-    var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
-    cena.add(luzAmbiente);
-    
-    //luz direcional
-    var luzDirecional = new THREE.DirectionalLight(0xffffff, 0.5);
-        //ligeiramente acima de cena para que os raios entrem na cena de cima para baixo
-        luzDirecional.position.set(0, 1, 0);
-    cena.add(luzDirecional);
-
-    //luz pontual
-    var luzPontual = new THREE.PointLight(0xffffff, 0.5);
-    luzPontual.position.set(0, 1, 0);
-    cena.add(luzPontual);
 
     renderer.render(cena, camaraPerspetiva);
 
