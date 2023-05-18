@@ -36,6 +36,21 @@ var materialTextura = new THREE.MeshStandardMaterial({ map: textura });
 var meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
 meshCubo.translateZ(-6.0);
 
+//luz ambiente
+var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
+cena.add(luzAmbiente);
+
+//luz direcional
+var luzDirecional = new THREE.DirectionalLight(0xffffff, 0.5);
+    //ligeiramente acima de cena para que os raios entrem na cena de cima para baixo
+    luzDirecional.position.set(0, 1, 0);
+cena.add(luzDirecional);
+
+//luz pontual
+var luzPontual = new THREE.PointLight(0xffffff, 0.5);
+luzPontual.position.set(0, 1, 0);
+cena.add(luzPontual);
+
 /********************************************************
                     GRID HELPER
 *********************************************************/
@@ -142,17 +157,19 @@ importer.load('./Objetos/SimpleHouse.fbx', function (object) {
 
 //função para mudar entre as 2 câmaras
 function mudarCamara() {
-    isPerspectiveCameraActive = !isPerspectiveCameraActive;
+    //isPerspectiveCameraActive = !isPerspectiveCameraActive;
   
     // Set the active camera
-    if (isPerspectiveCameraActive) {
+    if (isPerspectiveCameraActive==true) {
       camara.position.copy(camaraPerspetiva.position);
       camara.rotation.copy(camaraPerspetiva.rotation);
-      renderer.render(cena, camaraPerspetiva);
+      //renderer.render(cena, camaraPerspetiva);
+      isPerspectiveCameraActive = false;
     } else {
       camaraPerspetiva.position.copy(camara.position);
       camaraPerspetiva.rotation.copy(camara.rotation);
-      renderer.render(cena, camara);
+      //renderer.render(cena, camara);
+    isPerspectiveCameraActive = true;
     }
 }
 
@@ -567,20 +584,6 @@ function Start() {
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
 
-    //luz ambiente
-    var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
-    cena.add(luzAmbiente);
-    
-    //luz direcional
-    var luzDirecional = new THREE.DirectionalLight(0xffffff, 0.5);
-        //ligeiramente acima de cena para que os raios entrem na cena de cima para baixo
-        luzDirecional.position.set(0, 1, 0);
-    cena.add(luzDirecional);
-
-    //luz pontual
-    var luzPontual = new THREE.PointLight(0xffffff, 0.5);
-    luzPontual.position.set(0, 1, 0);
-    cena.add(luzPontual);
 
     renderer.render(cena, camaraPerspetiva);
 
@@ -597,7 +600,17 @@ function loop() {
         mixerAnimacao.update(relogio.getDelta());
     }
 
-    renderer.render(cena, camaraPerspetiva);
+    if (isPerspectiveCameraActive==true) {
+        camara.position.copy(camaraPerspetiva.position);
+        camara.rotation.copy(camaraPerspetiva.rotation);
+        renderer.render(cena, camaraPerspetiva);
+      } else {
+        camaraPerspetiva.position.copy(camara.position);
+        camaraPerspetiva.rotation.copy(camara.rotation);
+        renderer.render(cena, camara);
+      }
+
+    //renderer.render(cena, camaraPerspetiva);
 
     requestAnimationFrame(loop);
 }
