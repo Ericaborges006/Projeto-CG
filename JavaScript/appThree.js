@@ -102,7 +102,7 @@ importer.load('./Objetos/Bed.fbx', function (object) {
     object.position.y = -0.5;
     object.position.z = -10.3;
     
-    objectImportado = object; 
+    objetoImportado = object; 
 
 });
 
@@ -132,7 +132,7 @@ importer.load('./Objetos/Podium.obj', function (object) {
 
 });
 
-importer.load('./Objetos/SimpleHouse.fbx', function (object) {
+/*importer.load('./Objetos/SimpleHouse.fbx', function (object) {
 
     object.traverse(function (child) 
     {
@@ -153,7 +153,7 @@ importer.load('./Objetos/SimpleHouse.fbx', function (object) {
     object.position.z = 1;
    
     objetoImportado = object;
-});
+});*/
 
 //função para mudar entre as 2 câmaras
 function mudarCamara() {
@@ -306,8 +306,6 @@ handleMesh.position.x=0.1;
 
 doorMesh.add(handleMesh);
 
-
-
 // create the 2nd fridge door mesh
 var door2Geometry = new THREE.BoxGeometry(0.1, 1, 1.2);
 door2Geometry.translate( 0, 0, -0.55 );
@@ -429,15 +427,6 @@ meshFridge.position.y=y;
 meshFridge.position.z=z;
 }
 
-
-function animate() {
-  requestAnimationFrame(animate);
-  TWEEN.update();
-  // Additional rendering or updating logic for your scene can be added here
-}
-
-animate();
-
 // create a raycaster object
 var raycaster = new THREE.Raycaster();
 
@@ -464,6 +453,150 @@ function onMouseClick(event) {
     }
   }
 
+
+
+/********************************************************
+ *                        Prateleira                    *    
+ ********************************************************/
+
+var meshCloset;
+
+function create_armario(x,y,z)
+{
+
+    // Texturas globais para serem usadas pelos meshs todos
+    
+        var texture = new THREE.TextureLoader().load('./Images/Dcloset2.jpg');
+        //var cmaterial = new THREE.MeshBasicMaterial({ map:texture });
+        //var cmaterial = new THREE.MeshStandardMaterial({ map:texture });
+        var cmaterial = new THREE.MeshPhongMaterial({ map:texture });
+
+    // Middle Shelf Wall
+        var wallGeometry = new THREE.BoxGeometry(0.95, 2.5, 0.1);
+        meshCloset = new THREE.Mesh(wallGeometry, cmaterial);
+
+    // ----------------------------------------------Side Walls--------------------------------------------------------
+
+        // WALL 1 ( Bottom Right )
+            var wall1Geometry= new THREE.BoxGeometry(1, 0.4, 0.1);
+            var wall1Mesh= new THREE.Mesh(wall1Geometry, cmaterial);
+
+            wall1Mesh.position.z = -0.95;
+            wall1Mesh.position.y = -1.25;
+
+            meshCloset.add(wall1Mesh);
+
+        // WALL 2 ( Bottom Left )
+            var wall2Geometry= new THREE.BoxGeometry(1, 0.9, 0.1);
+            var wall2Mesh= new THREE.Mesh(wall2Geometry, cmaterial);
+
+            wall2Mesh.position.z = 0.95;
+            wall2Mesh.position.y = -1;
+
+            meshCloset.add(wall2Mesh);
+
+        // WALL 3 ( Mid Right )
+            var wall3Geometry= new THREE.BoxGeometry(1, 0.9, 0.1);
+            var wall3Mesh= new THREE.Mesh(wall3Geometry, cmaterial);
+
+            wall3Mesh.position.z = -0.95;
+            wall3Mesh.position.y = 0;
+
+            meshCloset.add(wall3Mesh);
+
+        // WALL 4 ( Mid Left )
+            var wall4Geometry= new THREE.BoxGeometry(1, 0.9, 0.1);
+            var wall4Mesh= new THREE.Mesh(wall4Geometry, cmaterial);
+
+            wall4Mesh.position.z = 0.95;
+            wall4Mesh.position.y = 0.5;
+
+            meshCloset.add(wall4Mesh);
+
+        // WALL 5 ( Top Right)
+            var wall5Geometry= new THREE.BoxGeometry(1, 0.9, 0.1);
+            var wall5Mesh= new THREE.Mesh(wall5Geometry, cmaterial);
+
+            wall5Mesh.position.z = -0.95;
+            wall5Mesh.position.y = 1;
+
+            meshCloset.add(wall5Mesh)
+
+
+    // ----------------------------------------------Prateleiras--------------------------------------------------------
+            
+        // Prateleira 1
+            var shelf6Geometry=new THREE.BoxGeometry(1, 0.1, 1.045);
+            var shelf6Mesh= new THREE.Mesh(shelf6Geometry, cmaterial);
+    
+            shelf6Mesh.position.y = 1.5;
+            shelf6Mesh.position.z = -0.478;
+
+            meshCloset.add(shelf6Mesh);
+                
+        //Prateleira 2
+            var shelf5Geometry=new THREE.BoxGeometry(1, 0.1, 1);
+            var shelf5Mesh= new THREE.Mesh(shelf5Geometry, cmaterial);
+
+            shelf5Mesh.position.y = 1;
+            shelf5Mesh.position.z = 0.5;
+
+            meshCloset.add(shelf5Mesh);
+                
+        // Prateleira 3
+            var shelfGeometry=new THREE.BoxGeometry(1, 0.1, 1);
+            var shelfMesh= new THREE.Mesh(shelfGeometry, cmaterial);
+    
+            shelfMesh.position.y = 0.5;
+            shelfMesh.position.z = -0.5;
+            meshCloset.add(shelfMesh);
+
+        // Prateleira 4   
+            var shelf2Geometry=new THREE.BoxGeometry(1, 0.1, 1);
+            var shelf2Mesh= new THREE.Mesh(shelf2Geometry, cmaterial);
+    
+            shelf2Mesh.position.y = 0;
+            shelf2Mesh.position.z = 0.5;
+    
+            meshCloset.add(shelf2Mesh);
+    
+        //Prateleira 5
+            var shelf3Geometry=new THREE.BoxGeometry(1, 0.1, 2);
+            var shelf3Mesh= new THREE.Mesh(shelf3Geometry, cmaterial);
+    
+            shelf3Mesh.position.y=-0.5;    
+            meshCloset.add(shelf3Mesh);
+    
+        //Prateleira 6
+            var shelf4Geometry=new THREE.BoxGeometry(1, 0.1, 1.9);
+            var shelf4Mesh= new THREE.Mesh(shelf4Geometry, cmaterial);
+    
+            shelf4Mesh.position.y = -1;
+            shelf4Mesh.position.z = -0.05;  
+            meshCloset.add(shelf4Mesh);
+
+    // NÃO MEXER
+        meshCloset.position.x=x;
+        meshCloset.position.y=y;
+        meshCloset.position.z=z;
+
+    // Translação de todos os childs da Mesh Principal (Tábua Central Vertical) ao longo do Y
+        meshCloset.traverse(function(child) {
+            if (child !== meshCloset) {
+                child.position.y -= 0.25;
+            }
+            });
+
+            
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    TWEEN.update();
+    // Additional rendering or updating logic for your scene can be added here
+  }
+  
+  animate();
 
 
 /********************************************************
@@ -569,7 +702,8 @@ function Start() {
     create_frigo(-10.25,1.1,-10);
     cena.add(meshFridge);
     cena.add(meshCubo);
-
+    create_armario(0.25, 1.5, 0);
+    cena.add(meshCloset);
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
     var focoLuz = new THREE.SpotLight(0xffffff, 1);
@@ -579,7 +713,7 @@ function Start() {
     focoLuz.position.z = 10;
 
     //Dizemos a light pata ficar a apontar para a poisção do cubo.
-    focoLuz.lookAt(meshCubo.position);
+    focoLuz.lookAt(meshCloset.position);
 
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
