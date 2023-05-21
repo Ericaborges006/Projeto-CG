@@ -7,6 +7,7 @@ import { FBXLoader } from 'FBXLoader';
 //Importação da biblioteca que nos permite explorar a nossa cena através do importmap
 import{PointerLockControls} from 'PointerLockControls';
 
+
 import { OBJLoader } from 'OBJLoader';
 
 
@@ -81,13 +82,364 @@ var importer = new FBXLoader();
 //var importerOBJ = new OBJLoader();
 var importerOBJ = new OBJLoader();
 
-// Podio teste
-importer.load('./Objetos/Bed.fbx', function (object) {
+
+/********************************************************
+*                    IMPORT DE OBJETOS                  *
+*********************************************************/
+
+importer.load('./Objetos/OldComputer.fbx', function (object) {
+
+    //var texture = new THREE.TextureLoader().load('./Images/Metal.jpg');
+    //var material = new THREE.MeshPhongMaterial({ map:texture });
     object.traverse(function (child) 
     {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
+            //child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.001;
+    object.scale.y = 0.001;
+    object.scale.z = 0.001;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 0.5;
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/coin.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/coin.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1;
+    
+    object.rotateX(Math.PI / -2);
+
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/comb.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/comb.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.4;
+
+    object.rotateX(Math.PI / -2);
+    object.rotateZ(Math.PI / 2);
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/cup.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/cup.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.2;
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/key.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/key.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.3;
+
+    object.rotateX(Math.PI / -2);
+    object.rotateZ(Math.PI / 2);
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/knife.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/knife.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.5;
+    
+    object.rotateX(Math.PI / -2);
+    object.rotateZ(Math.PI / 2);
+
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/opener.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/opener.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.6;
+
+    object.rotateX(Math.PI / -2);
+    object.rotateZ(Math.PI / 2);
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/pencil.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/pencil.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.7;
+
+    object.rotateX(Math.PI / -2);
+    object.rotateZ(Math.PI / -2);
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/spoon.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/spoon.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.8;
+
+    object.rotateY(Math.PI / 2);
+    object.rotateX(Math.PI / -2);
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/spray.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/spray.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 1.9;
+    
+    objetoImportado = object; 
+
+});
+
+importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/toothbrush.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.1;
+    object.scale.y = 0.1;
+    object.scale.z = 0.1;
+  
+    object.position.x = 0.25;
+    object.position.y = 1;
+    object.position.z = 2;
+    
+    object.rotateX(Math.PI / -2);
+    object.rotateZ(Math.PI / 2);
+    
+    objetoImportado = object; 
+
+});
+
+importer.load('./Objetos/Bed.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/DCloset.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
         }
     
     });
@@ -107,7 +459,7 @@ importer.load('./Objetos/Bed.fbx', function (object) {
 });
 
 //var importer = new THREE.OBJLoader();
-importer.load('./Objetos/Podium.obj', function (object) {
+importerOBJ.load('./Objetos/Podium.obj', function (object) {
 
     object.traverse(function (child) 
     {
@@ -127,33 +479,9 @@ importer.load('./Objetos/Podium.obj', function (object) {
     object.position.x = 0;
     object.position.y = 2;
     object.position.z = -6.0;
-    
-    objectImportado = object; 
 
+    objetoImportado = object; 
 });
-
-/*importer.load('./Objetos/SimpleHouse.fbx', function (object) {
-
-    object.traverse(function (child) 
-    {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        }
-    });
-
-    cena.add(object);	
-
-    object.scale.x = 0.002;
-    object.scale.y = 0.002;
-    object.scale.z = 0.002;
-
-    object.position.x = 0;
-    object.position.y = -0.5;
-    object.position.z = 1;
-   
-    objetoImportado = object;
-});*/
 
 //função para mudar entre as 2 câmaras
 function mudarCamara() {
@@ -427,36 +755,45 @@ meshFridge.position.y=y;
 meshFridge.position.z=z;
 }
 
-// create a raycaster object
+/********************************************************
+ *                      Raycaster                       *
+ ********************************************************/
 var raycaster = new THREE.Raycaster();
 
 // add a click event listener to the renderer
 renderer.domElement.addEventListener('click', onMouseClick);
 
 function onMouseClick(event) {
+
   // calculate mouse position in normalized device coordinates
-  var mouse = new THREE.Vector2();
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    var mouse = new THREE.Vector2();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   // set the raycaster position and direction based on the camera and mouse position
-  raycaster.setFromCamera(mouse, camaraPerspetiva);
+    raycaster.setFromCamera(mouse, camaraPerspetiva);
 
   // get the objects that intersect with the raycaster
-  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh]);
+    var intersects = raycaster.intersectObjects([doorMesh,door2Mesh]);
 
   // if the ray intersects with the fridge door, toggle its state
   // check if any object was intersected
-  if (intersects.length > 0) {
+    if (intersects.length > 0) {
       var intersectedObject = intersects[0].object;
       triggerdoor(intersectedObject);
     }
-  }
-
+    //   if (object === lampMesh) {
+    //     // Toggle the visibility of the spotlight
+    //        lamppointlight.visible = !lamppointlight.visible;
+    //     }
+    // 
+    
+}
+  
 
 
 /********************************************************
- *                        Prateleira                    *    
+ *                        Prateleira                    *
  ********************************************************/
 
 var meshCloset;
@@ -585,9 +922,66 @@ function create_armario(x,y,z)
             if (child !== meshCloset) {
                 child.position.y -= 0.25;
             }
-            });
+            });           
+}
 
-            
+
+/********************************************************
+ *                        Candeeiro                     *    
+ ********************************************************/
+
+var meshLamp;
+
+function create_lamp(x,y,z)
+{
+
+    // Texturas globais para serem usadas pelos meshs 
+    
+        var headtexture = new THREE.TextureLoader().load('./Images/LampHead2.jpg');
+        var bodytexture = new THREE.TextureLoader().load('./Images/Metal.jpg');
+        var basetexture = new THREE.TextureLoader().load('./Images/Dcloset.jpg');
+        //var cmaterial = new THREE.MeshBasicMaterial({ map:texture });
+        //var cmaterial = new THREE.MeshStandardMaterial({ map:texture });
+        //var cmaterial = new THREE.MeshPhongMaterial({ map:texture });
+
+    // Middle Shelf Wall
+        //var wallGeometry = new THREE.BoxGeometry(0.95, 2.5, 0.1);
+        //meshLamp = new THREE.Mesh(wallGeometry, cmaterial);
+
+
+    // Lamp Body (cilindro)
+        var bodyGeometry = new THREE.CylinderGeometry(0.02, 0.02, 2, 32);
+        var bodyMaterial = new THREE.MeshPhongMaterial({ map:bodytexture });
+        meshLamp = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        
+    // Lamp Cone (Light Emitter)
+        var lightGeometry = new THREE.ConeGeometry(0.2, 0.5, 32);
+        var lightMaterial = new THREE.MeshPhongMaterial({ map:headtexture });
+        var lightMesh = new THREE.Mesh(lightGeometry, lightMaterial);
+
+        lightMesh.position.y = 1; 
+        meshLamp.add(lightMesh);
+
+    // Lamp Base
+        var baseGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.05, 32);
+        var baseMaterial = new THREE.MeshPhongMaterial({ map:basetexture });
+        var baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
+        
+        baseMesh.rotateY(Math.PI / 2);
+        baseMesh.position.y = -0.95;
+
+        meshLamp.add(baseMesh);
+
+    // Light
+        var lamppointlight = new THREE.PointLight(0xffffff, 1, 5);
+        lamppointlight.position.copy(lightMesh.position);
+        meshLamp.add(lamppointlight);
+
+    // NÃO MEXER
+        meshLamp.position.x=x;
+        meshLamp.position.y=y;
+        meshLamp.position.z=z;
+
 }
 
 function animate() {
@@ -704,6 +1098,8 @@ function Start() {
     cena.add(meshCubo);
     create_armario(0.25, 1.5, 0);
     cena.add(meshCloset);
+    create_lamp(0.25, 1, 4);
+    cena.add(meshLamp);
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
     var focoLuz = new THREE.SpotLight(0xffffff, 1);
