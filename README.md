@@ -83,3 +83,36 @@ Como dar import a objetos do tipo blender? abrir como blender e exportar como FB
     - <progress class="ui" id="loading" value="50" max="100">50%</progress>
 
     - Implementar na lógica que cada vez que se interaje/recolhe um objeto a barra de progresso aumenta x %
+
+    *IMPORT DE OBJETOS E APLICAÇÃO DAS TEXTURAS* ----------------------------------------------------------------------------------
+
+    importer.load('./Objetos/NOMEOBJETO.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/TEXTURAIMG.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
+  
+    object.position.x = -12.8;
+    object.position.y = -0.5;
+    object.position.z = -10.3;
+    
+    objetoImportado = object; 
+
+});
+
+NOTA: SE O OBJETO FOR DO TIPO .OBJ, EM VEZ DE USAR O IMPORTER.LOAD, USAR O IMPORTEROBJ.LOAD
