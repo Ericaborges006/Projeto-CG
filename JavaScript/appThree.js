@@ -19,7 +19,7 @@ var renderer = new THREE.WebGLRenderer();
 var camaraselecionada=1;
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
-camaraPerspetiva.position.set(0, 1.6, 0); // Adicionar height à câmara
+camaraPerspetiva.position.set(0, 2, 0); // Adicionar height à câmara
 
 camara.updateProjectionMatrix();
 
@@ -68,7 +68,7 @@ var importerOBJ = new OBJLoader();
 
 
 
-importer.load('./Objetos/tudo.fbx', function (object) {
+importer.load('./Objetos/tudo2.fbx', function (object) {
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load('./Images/Colors.png');
     const material = new THREE.MeshStandardMaterial({ map: texture });
@@ -76,8 +76,8 @@ importer.load('./Objetos/tudo.fbx', function (object) {
 
     object.traverse(function (child) {
         if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+            child.castShadow = false;
+            child.receiveShadow = false;
             child.material = material;
             // Increase the roughness value to make the material less reflective
             child.material.roughness = 1;
@@ -103,6 +103,24 @@ importer.load('./Objetos/tudo.fbx', function (object) {
 
     objetoImportado = object;
 });
+
+importer.load('./Objetos/chaoteto.fbx', function (object) {
+
+    cena.add(object);
+
+    object.rotation.y = Math.PI / 2; 
+
+    object.scale.x = 0.015;
+    object.scale.y = 0.015;
+    object.scale.z = 0.015;
+
+    object.position.x = 0;
+    object.position.y = 0;
+    object.position.z = 0   ;
+
+    objetoImportado = object;
+});
+
 
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
@@ -169,8 +187,8 @@ var meshFridge;
 var doorMesh;
 var doorAnimation;
 var door2Mesh;
-
-
+var portaMesh
+var portaExteriorMesh;
 
 function triggerdoor(mesh) {
 
@@ -190,6 +208,7 @@ function triggerdoor(mesh) {
     });
   }
 }
+
 
 function create_frigo(x,y,z){
 // create the main fridge mesh
@@ -344,6 +363,57 @@ meshFridge.position.y=y;
 meshFridge.position.z=z;
 }
 
+/********************************************************
+ *                     portas                      *    
+ * ******************************************************/
+
+function create_porta(x,y,z, rotate){
+    // create the porta mesh
+    var portaGeometry = new THREE.BoxGeometry(0.1, 2.8, 1.9);  
+    portaGeometry.translate( 0, 0, 1 );
+    
+    if (rotate) {
+        // rotate thegeometry by 180 degrees around the y-axis
+        portaGeometry.rotateY(Math.PI);
+    }
+    
+    var texture = new THREE.TextureLoader().load('/Images/wood.jpg');
+    var portaMaterial = new THREE.MeshBasicMaterial({ map:texture });
+    portaMesh = new THREE.Mesh(portaGeometry, portaMaterial);
+    portaMesh.userData.isopen = 0;
+    portaMesh.position.x=x;
+    portaMesh.position.y=y;
+    portaMesh.position.z=z;
+    return portaMesh;
+}
+// create the first set of doors
+var portaMesh1 = create_porta(-2.6,1.35,-2.8, false);
+cena.add(portaMesh1);
+var portaMesh2 = create_porta(-2.6,1.35,-8.2, false);
+cena.add(portaMesh2);
+var portaMesh3 = create_porta(-2.6,1.35,-13.6, false);
+cena.add(portaMesh3);
+
+// create the other set of doors that open to the other side
+var portaMesh4 = create_porta(-6.4,1.35,2.67, true);
+cena.add(portaMesh4);
+var portaMesh5 = create_porta(-6.4,1.35,-2.8, true);
+cena.add(portaMesh5);
+var portaMesh6 = create_porta(-6.4,1.35,-8.25, true);
+cena.add(portaMesh6);
+
+function create_portaexterior(x,y,z){
+    // create the portaexterior mesh
+    var portaExteriorGeometry = new THREE.BoxGeometry(0.1, 2.8, 3.7);  
+    var texture = new THREE.TextureLoader().load('/Images/porta.jpg');
+    var portaExteriorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+    portaExteriorMesh = new THREE.Mesh(portaExteriorGeometry, portaExteriorMaterial);
+    portaExteriorMesh.rotation.y = Math.PI / 2;
+    portaExteriorMesh.position.x=x;
+    portaExteriorMesh.position.y=y;
+    portaExteriorMesh.position.z=z;
+
+}
 
 function animate() {
   requestAnimationFrame(animate);
@@ -369,7 +439,7 @@ function onMouseClick(event) {
   raycaster.setFromCamera(mouse, camaraPerspetiva);
 
   // get the objects that intersect with the raycaster
-  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh]);
+  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh,portaMesh1,portaMesh2,portaMesh3,portaMesh4,portaMesh5,portaMesh6]);
 
   // if the ray intersects with the fridge door, toggle its state
   // check if any object was intersected
@@ -379,6 +449,8 @@ function onMouseClick(event) {
     }
   }
 
+
+  
 //função para mudar entre as 2 câmaras
 function mudarCamara() {
     if (camaraselecionada == 1)
@@ -489,7 +561,10 @@ function Start() {
     create_frigo(-11.75,1.1,-2);
     cena.add(meshFridge);
     cena.add(meshCubo);
+    create_portaexterior(-4.5,1.35,-24.5);
+    cena.add(portaExteriorMesh);
 
+    
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
     var focoLuz = new THREE.SpotLight(0xffffff, 1);
