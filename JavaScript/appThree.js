@@ -145,7 +145,24 @@ importer.load('./Objetos/tudo2.fbx', function (object) {
     objetoImportado = object;
 });
 
-importer.load('./Objetos/chaoteto.fbx', function (object) {
+importer.load('./Objetos/chao.fbx', function (object) {
+
+    cena.add(object);
+
+    object.rotation.y = Math.PI / 2; 
+
+    object.scale.x = 0.015;
+    object.scale.y = 0.015;
+    object.scale.z = 0.015;
+
+    object.position.x = 0;
+    object.position.y = 0;
+    object.position.z = 0   ;
+
+    objetoImportado = object;
+});
+
+importer.load('./Objetos/teto.fbx', function (object) {
 
     cena.add(object);
 
@@ -193,7 +210,7 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
     objetoImportado = object; 
 
 });
-
+var coin;
 importerOBJ.load('./Objetos/coin.obj', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/coin.png');
@@ -220,7 +237,7 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     object.position.z = -14.5;
     
     object.rotateX(Math.PI / -2);
-
+    coin = object;
     objetoImportado = object; 
 
 });
@@ -285,9 +302,9 @@ importerOBJ.load('./Objetos/cup.obj', function (object) {
     objetoImportado = object; 
 
 });
-
+var key;
 importerOBJ.load('./Objetos/key.obj', function (object) {
-
+    
     var texture = new THREE.TextureLoader().load('./Images/key.png');
     var material = new THREE.MeshPhongMaterial({ map:texture });
     object.traverse(function (child) 
@@ -296,7 +313,6 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
             child.castShadow = true;
             child.receiveShadow = true;
             child.material = material;
-
         }
     
     });
@@ -314,7 +330,7 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     object.rotateX(Math.PI / 1);
     object.rotateZ(Math.PI / 4);
     //object.rotateY(Math.PI / 2);
-    
+    key = object;
     objetoImportado = object; 
 
 });
@@ -690,6 +706,7 @@ var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
 var texture = new THREE.TextureLoader().load('./Images/fridge_texture.jpg');
 var materialFridge = new THREE.MeshBasicMaterial({ map: texture });
 meshFridge = new THREE.Mesh(geometriaFridge, materialFridge);
+meshFridge.rotation.y = Math.PI / 2;
 
 // create the fridge door mesh
 var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);  
@@ -786,7 +803,7 @@ var shelfMaterial = new THREE.MeshBasicMaterial({ map: texture});
 var shelfMesh= new THREE.Mesh(shelfGeometry, shelfMaterial);
 
 shelfMesh.position.y=0.50;
-shelfMesh.position.x=0.55;
+shelfMesh.position.x=0.56;
 
 meshFridge.add(shelfMesh);
 
@@ -863,7 +880,7 @@ var portaMesh1 = create_porta(-2.6,1.35,-2.8, false);
 cena.add(portaMesh1);
 var portaMesh2 = create_porta(-2.6,1.35,-8.2, false);
 cena.add(portaMesh2);
-var portaMesh3 = create_porta(-2.6,1.35,-13.6, false);
+var portaMesh3 = create_porta(-2.6,1.35,-13.7, false);
 cena.add(portaMesh3);
 
 // create the other set of doors that open to the other side
@@ -1089,30 +1106,57 @@ var raycaster = new THREE.Raycaster();
 renderer.domElement.addEventListener('click', onMouseClick);
 
 function onMouseClick(event) {
+// array of doors to triggera
+var doorArray = [doorMesh, door2Mesh, /*portaMesh1, portaMesh2*/, portaMesh3, portaMesh4, portaMesh5, portaMesh6];
+
+// array of objects to remove
+
+// function removeKeyObject() {
+//     cena.remove(key);ss
+//     key = null;
+//   }
+var removeObjectArray = [portaMesh1,portaMesh2, key, coin];
 
   // calculate mouse position in normalized device coordinates
-    var mouse = new THREE.Vector2();
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  var mouse = new THREE.Vector2();
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   // set the raycaster position and direction based on the camera and mouse position
-    raycaster.setFromCamera(mouse, camaraPerspetiva);
+  raycaster.setFromCamera(mouse, camaraPerspetiva);
 
   // get the objects that intersect with the raycaster
-  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh,portaMesh1,portaMesh2,portaMesh3,portaMesh4,portaMesh5,portaMesh6]);
+  var intersects = raycaster.intersectObjects(removeObjectArray);
 
-  // if the ray intersects with the fridge door, toggle its state
-  // check if any object was intersected
-    if (intersects.length > 0) {
-      var intersectedObject = intersects[0].object;
-      triggerdoor(intersectedObject);
+  // if the ray intersects with any of the objects in the array
+  if (intersects.length > 0) {
+    var intersectedObject = intersects[0].object;
+    // remove the intersected object from the scene
+    cena.remove(intersectedObject);
+    if (intersectedObject = key){
+        cena.remove(key);
     }
+    if (intersectedObject = coin){
+        cena.remove(coin);
+    }
+  }
+
+  // get the objects that intersect with the raycaster in the door array
+ var doorIntersects = raycaster.intersectObjects(doorArray);
+
+  // if the ray intersects with any of the doors in the array
+  if (doorIntersects.length > 0) {
+    var doorObject = doorIntersects[0].object;
+    // call the triggerdoor function with the intersected door object as a parameter
+    triggerdoor(doorObject);
+  }
+
     //   if (object === lampMesh) {
     //     // Toggle the visibility of the spotlight
     //        lamppointlight.visible = !lamppointlight.visible;
     //     }
     // 
-    
+
 }
   
 
@@ -1225,7 +1269,7 @@ btnCamaras.onclick = function ()
 
 function Start() {
 
-    create_frigo(-10.25,1.1,-10);
+    create_frigo(-1.8,1.6,-14);
     cena.add(meshFridge);
     cena.add(meshCubo);
     create_portaexterior(-4.5,1.35,-24.5);
