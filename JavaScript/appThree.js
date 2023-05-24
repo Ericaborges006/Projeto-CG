@@ -20,7 +20,13 @@ var renderer = new THREE.WebGLRenderer();
 let isPerspectiveCameraActive = true;
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
-camaraPerspetiva.position.set(0, 2, 0); // Adicionar height à câmara
+
+// CamaraStart
+camaraPerspetiva.position.set(-8.5, 2, -17.2); // Camara posicionada à frente da prateleira
+camaraPerspetiva.lookAt(new THREE.Vector3(-8.5, 1.5, -14.2)); // Câmara a olhar para a prateleira
+
+ //camaraPerspetiva.position.set(-4.5, 2, -23); // Câmara inicializada à frente das duas portas da entrada)
+ //camaraPerspetiva.lookAt(new THREE.Vector3(-4.5, 2, 2)); //Câmara a olhar para o corredor
 
 camara.updateProjectionMatrix();
 
@@ -59,8 +65,24 @@ cena.add(luzPontual);
 const size = 100;
 const divisions = 100;
 
-const gridHelper = new THREE.GridHelper( size, divisions );
-cena.add( gridHelper );
+// const gridHelper1 = new THREE.GridHelper( size, divisions );
+// gridHelper1.position.y = 1;
+// cena.add( gridHelper1 );
+// const gridHelper2 = new THREE.GridHelper( size, divisions );
+// gridHelper2.position.y = 0.8;
+// cena.add( gridHelper2 );
+// const gridHelper3 = new THREE.GridHelper( size, divisions );
+// gridHelper3.position.y = 0.5;
+// cena.add( gridHelper3 );
+// const gridHelper4 = new THREE.GridHelper( size, divisions );
+// gridHelper4.position.y = 1.3;
+// cena.add( gridHelper4 );
+// const gridHelper5 = new THREE.GridHelper( size, divisions );
+// gridHelper5.position.y = 1.8;
+// cena.add( gridHelper5 );
+// const gridHelper6 = new THREE.GridHelper( size, divisions );
+// gridHelper6.position.y = 2.3;
+// cena.add( gridHelper6 );
 
 
 /********************************************************
@@ -143,14 +165,14 @@ importer.load('./Objetos/chaoteto.fbx', function (object) {
 
 importer.load('./Objetos/OldComputer.fbx', function (object) {
 
-    //var texture = new THREE.TextureLoader().load('./Images/Metal.jpg');
-    //var material = new THREE.MeshPhongMaterial({ map:texture });
+    var texture = new THREE.TextureLoader().load('./Images/octexture.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
     object.traverse(function (child) 
     {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
-            //child.material = material;
+            child.material = material;
 
         }
     
@@ -158,14 +180,16 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
  
     cena.add(object);	
 
-    object.scale.x = 0.001;
-    object.scale.y = 0.001;
-    object.scale.z = 0.001;
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
   
-    object.position.x = 0.25;
-    object.position.y = 1;
-    object.position.z = 0.5;
+    object.position.x = -7.8;
+    object.position.y = 2.3;
+    object.position.z = -14.3;
     
+    object.rotateY(Math.PI / 2);
+
     objetoImportado = object; 
 
 });
@@ -191,9 +215,9 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     object.scale.y = 0.1;
     object.scale.z = 0.1;
   
-    object.position.x = 0.25;
-    object.position.y = 1;
-    object.position.z = 1;
+    object.position.x = -7.8;
+    object.position.y = 1.3;
+    object.position.z = -14.5;
     
     object.rotateX(Math.PI / -2);
 
@@ -254,9 +278,9 @@ importerOBJ.load('./Objetos/cup.obj', function (object) {
     object.scale.y = 0.1;
     object.scale.z = 0.1;
   
-    object.position.x = 0.25;
+    object.position.x = -9.1;
     object.position.y = 1;
-    object.position.z = 1.2;
+    object.position.z = -14.6;
     
     objetoImportado = object; 
 
@@ -279,16 +303,17 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
  
     cena.add(object);	
 
-    object.scale.x = 0.1;
-    object.scale.y = 0.1;
-    object.scale.z = 0.1;
+    object.scale.x = 0.2;
+    object.scale.y = 0.2;
+    object.scale.z = 0.2;
   
-    object.position.x = 0.25;
-    object.position.y = 1;
-    object.position.z = 1.3;
+    object.position.x = -8.656;
+    object.position.y = 1.9;
+    object.position.z = -14.65;
 
-    object.rotateX(Math.PI / -2);
-    object.rotateZ(Math.PI / 2);
+    object.rotateX(Math.PI / 1);
+    object.rotateZ(Math.PI / 4);
+    //object.rotateY(Math.PI / 2);
     
     objetoImportado = object; 
 
@@ -315,12 +340,12 @@ importerOBJ.load('./Objetos/knife.obj', function (object) {
     object.scale.y = 0.1;
     object.scale.z = 0.1;
   
-    object.position.x = 0.25;
-    object.position.y = 1;
-    object.position.z = 1.5;
+    object.position.x = -8.2;
+    object.position.y = 1.3;
+    object.position.z = -14.5;
     
     object.rotateX(Math.PI / -2);
-    object.rotateZ(Math.PI / 2);
+    object.rotateZ(Math.PI / -1.3);
 
     objetoImportado = object; 
 
@@ -443,9 +468,9 @@ importerOBJ.load('./Objetos/spray.obj', function (object) {
     object.scale.y = 0.1;
     object.scale.z = 0.1;
   
-    object.position.x = 0.25;
+    object.position.x = -8.8;
     object.position.y = 1;
-    object.position.z = 1.9;
+    object.position.z = -14.3;
     
     objetoImportado = object; 
 
@@ -882,6 +907,7 @@ function create_armario(x,y,z)
     // Middle Shelf Wall
         var wallGeometry = new THREE.BoxGeometry(0.95, 2.5, 0.1);
         meshCloset = new THREE.Mesh(wallGeometry, cmaterial);
+        meshCloset.rotateY(Math.PI / 2);
 
     // ----------------------------------------------Side Walls--------------------------------------------------------
 
@@ -1046,6 +1072,7 @@ function create_lamp(x,y,z)
         var lamppointlight = new THREE.PointLight(0xffffff, 1, 5);
         lamppointlight.position.copy(lightMesh.position);
         meshLamp.add(lamppointlight);
+        lamppointlight.lookAt(baseMesh.position);
 
     // NÃO MEXER
         meshLamp.position.x=x;
@@ -1204,9 +1231,9 @@ function Start() {
     create_portaexterior(-4.5,1.35,-24.5);
     cena.add(portaExteriorMesh);
 
-    create_armario(0.25, 1.5, 0);
+    create_armario(-8.5, 1.5, -14.2);
     cena.add(meshCloset);
-    create_lamp(0.25, 1, 4);
+    create_lamp(1, 1, -23);
     cena.add(meshLamp);
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
