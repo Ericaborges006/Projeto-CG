@@ -116,3 +116,22 @@ Como dar import a objetos do tipo blender? abrir como blender e exportar como FB
 });
 
 NOTA: SE O OBJETO FOR DO TIPO .OBJ, EM VEZ DE USAR O IMPORTER.LOAD, USAR O IMPORTEROBJ.LOAD
+
+
+
+
+
+*TIPS AND TRICKS COM A CÂMARA*
+
+    - CTRL+F ou F3;
+    - Procurar "CamaraStart";
+    - Bem comentado, não é preciso ser um génio da matemática para entender;
+    - Se quiserem mexer no posicionamento da câmara COPIEM O QUE ESTÁ LÁ E CRIEM UMA NOVA, COMENTANDO AS OUTRAS. Assim temos diferentes pontos de inicio para a câmara para n termos de percorrer a casa toda para ver as mudanças. Podem adicionar as linhas de código da posição da câmara para depois podermos escolher entre elas;
+    - A câmara está, no ato de escrita deste documento, posicionada à frente da prateleira a olhar para a mesma;
+    - Para o import dos objetos têm acima o código de import para .fbx e .obj para copiarem. Para colocarem no código, têm uma imagem para ajudar (/Images/ORIENTAÇÃO DA CASA.png). É confuso no início, especialmente se estiverem a tentar rodar os objetos e se andam pela casa, experimentem até deixar de ser confuso;
+
+GRIDHELPER
+
+    - Mesma coisa em cima, pesquisem o GridHelper com o CTRL+F, podem criar mais gridhelpers se necessário ou comentar os que estão;
+    - Isto ajuda imenso a posicionar os objetos. Criei vários com alturas diferentes para preencher as diferentes alturas da prateleira e deu grande jeito. Se não precisarem, deixem apenas o GridHelper com y = 1 (abaixo da câmara e acima do chão da casa);
+    
