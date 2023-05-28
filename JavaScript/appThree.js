@@ -98,9 +98,38 @@ var importer = new FBXLoader();
 var importerOBJ = new OBJLoader();
 
 
+
+// OUTLINES
+
+// const Olight = new THREE.SpotLight(0x800080, 0.5, 5);
+// cena.add(Olight);
+
+
+
 /********************************************************
 *                    IMPORT DE OBJETOS                  *
 *********************************************************/
+const emissiveColor = new THREE.Color(0x800080);
+const emissiveIntensity = 0.5;
+const emissiveMaterial = new THREE.MeshPhongMaterial({
+    color: emissiveColor, // Set the emissive color
+    emissive: emissiveColor, // Set the emissive color
+    emissiveIntensity: emissiveIntensity, // Set the emissive intensity (adjust as needed)
+    transparent: true,
+    opacity: 0.1,
+});
+
+// Define the distance threshold for turning on the emissive light
+const distanceThreshold = 10;
+
+// Function to check if the camera is within the distance threshold
+function isWithinDistanceThreshold(camaraPerspetiva, object) {
+  const distance = camaraPerspetiva.position.distanceTo(object.position);
+  return distance <= distanceThreshold;
+}
+
+
+
 
 importer.load('./Objetos/tudo2.fbx', function (object) {
     const textureLoader = new THREE.TextureLoader();
@@ -213,24 +242,42 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
-            child.material = material;
-
+            child.material = material;            
         }
     
+    });
+
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
     });
  
     cena.add(object);	
 
-    object.scale.x = 1;
-    object.scale.y = 1;
-    object.scale.z = 1;
+    object.scale.x = 0.2;
+    object.scale.y = 0.2;
+    object.scale.z = 0.2;
   
     object.position.x = -7.8;
     object.position.y = 1.3;
     object.position.z = -14.5;
     
     object.rotateX(Math.PI / -2);
-
     coin = object;
 
 });
@@ -309,17 +356,39 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
         }
     
     });
- 
-    cena.add(object);	
 
+     const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
+
+    cena.add(object);
+
+
+    
     object.scale.x = 0.2;
     object.scale.y = 0.2;
     object.scale.z = 0.2;
-  
+    
     object.position.x = -8.656;
     object.position.y = 1.9;
     object.position.z = -14.65;
-
+    
     object.rotateX(Math.PI / 1);
     object.rotateZ(Math.PI / 4);
 
