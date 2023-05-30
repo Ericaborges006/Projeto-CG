@@ -17,6 +17,7 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
+
 let isPerspectiveCameraActive = true;
 
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
@@ -34,14 +35,6 @@ renderer.setSize(window.innerWidth - 15, window.innerHeight - 80);
 renderer.setClearColor(0xaaaaaa);
 
 document.body.appendChild(renderer.domElement);
-
-var geometriaCubo = new THREE.BoxGeometry(1, 1, 1);
-
-var textura = new THREE.TextureLoader().load('./Images/boxImage.jpg');
-var materialTextura = new THREE.MeshStandardMaterial({ map: textura });
-
-var meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
-meshCubo.translateZ(-6.0);
 
 //luz ambiente
 var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
@@ -105,9 +98,38 @@ var importer = new FBXLoader();
 var importerOBJ = new OBJLoader();
 
 
+
+// OUTLINES
+
+// const Olight = new THREE.SpotLight(0x800080, 0.5, 5);
+// cena.add(Olight);
+
+
+
 /********************************************************
 *                    IMPORT DE OBJETOS                  *
 *********************************************************/
+const emissiveColor = new THREE.Color(0x800080);
+const emissiveIntensity = 0.5;
+const emissiveMaterial = new THREE.MeshPhongMaterial({
+    color: emissiveColor, // Set the emissive color
+    emissive: emissiveColor, // Set the emissive color
+    emissiveIntensity: emissiveIntensity, // Set the emissive intensity (adjust as needed)
+    transparent: true,
+    opacity: 0.1,
+});
+
+// Define the distance threshold for turning on the emissive light
+const distanceThreshold = 10;
+
+// Function to check if the camera is within the distance threshold
+function isWithinDistanceThreshold(camaraPerspetiva, object) {
+  const distance = camaraPerspetiva.position.distanceTo(object.position);
+  return distance <= distanceThreshold;
+}
+
+
+
 
 importer.load('./Objetos/tudo2.fbx', function (object) {
     const textureLoader = new THREE.TextureLoader();
@@ -145,7 +167,24 @@ importer.load('./Objetos/tudo2.fbx', function (object) {
     objetoImportado = object;
 });
 
-importer.load('./Objetos/chaoteto.fbx', function (object) {
+importer.load('./Objetos/chao.fbx', function (object) {
+
+    cena.add(object);
+
+    object.rotation.y = Math.PI / 2; 
+
+    object.scale.x = 0.015;
+    object.scale.y = 0.015;
+    object.scale.z = 0.015;
+
+    object.position.x = 0;
+    object.position.y = 0;
+    object.position.z = 0   ;
+
+    objetoImportado = object;
+});
+
+importer.load('./Objetos/teto.fbx', function (object) {
 
     cena.add(object);
 
@@ -193,7 +232,7 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
     objetoImportado = object; 
 
 });
-
+var coin;
 importerOBJ.load('./Objetos/coin.obj', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/coin.png');
@@ -203,28 +242,46 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
-            child.material = material;
-
+            child.material = material;            
         }
     
+    });
+
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
     });
  
     cena.add(object);	
 
-    object.scale.x = 0.1;
-    object.scale.y = 0.1;
-    object.scale.z = 0.1;
+    object.scale.x = 0.2;
+    object.scale.y = 0.2;
+    object.scale.z = 0.2;
   
     object.position.x = -7.8;
     object.position.y = 1.3;
     object.position.z = -14.5;
     
     object.rotateX(Math.PI / -2);
-
-    objetoImportado = object; 
+    coin = object;
 
 });
-
+var comb;
 importerOBJ.load('./Objetos/comb.obj', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/comb.png');
@@ -242,21 +299,21 @@ importerOBJ.load('./Objetos/comb.obj', function (object) {
  
     cena.add(object);	
 
-    object.scale.x = 0.1;
-    object.scale.y = 0.1;
-    object.scale.z = 0.1;
+    object.scale.x = 0.09;
+    object.scale.y = 0.09;
+    object.scale.z = 0.09;
   
-    object.position.x = 0.25;
-    object.position.y = 1;
-    object.position.z = 1.4;
+    object.position.x = -6.7;
+    object.position.y = 1.2;
+    object.position.z =-7.7;
 
     object.rotateX(Math.PI / -2);
-    object.rotateZ(Math.PI / 2);
+    object.rotateZ(Math.PI / -7);
     
-    objetoImportado = object; 
+    comb = object; 
 
 });
-
+var cup;
 importerOBJ.load('./Objetos/cup.obj', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/cup.png');
@@ -282,12 +339,12 @@ importerOBJ.load('./Objetos/cup.obj', function (object) {
     object.position.y = 1;
     object.position.z = -14.6;
     
-    objetoImportado = object; 
+    cup = object; 
 
 });
-
+var key;
 importerOBJ.load('./Objetos/key.obj', function (object) {
-
+    
     var texture = new THREE.TextureLoader().load('./Images/key.png');
     var material = new THREE.MeshPhongMaterial({ map:texture });
     object.traverse(function (child) 
@@ -296,26 +353,46 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
             child.castShadow = true;
             child.receiveShadow = true;
             child.material = material;
-
         }
     
     });
- 
-    cena.add(object);	
 
+     const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
+
+    cena.add(object);
+
+
+    
     object.scale.x = 0.2;
     object.scale.y = 0.2;
     object.scale.z = 0.2;
-  
+    
     object.position.x = -8.656;
     object.position.y = 1.9;
     object.position.z = -14.65;
-
+    
     object.rotateX(Math.PI / 1);
     object.rotateZ(Math.PI / 4);
-    //object.rotateY(Math.PI / 2);
-    
-    objetoImportado = object; 
+
+    key = object;
 
 });
 
@@ -476,6 +553,7 @@ importerOBJ.load('./Objetos/spray.obj', function (object) {
 
 });
 
+var tb;
 importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/toothbrush.png');
@@ -497,45 +575,16 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
     object.scale.y = 0.1;
     object.scale.z = 0.1;
   
-    object.position.x = 0.25;
-    object.position.y = 1;
-    object.position.z = 2;
+    object.position.x = -8;
+    object.position.y = 1.2;
+    object.position.z = -7.7;
     
     object.rotateX(Math.PI / -2);
-    object.rotateZ(Math.PI / 2);
+    //object.rotateZ(Math.PI / 2);
     
-    objetoImportado = object; 
+    tb = object; 
 
 });
-
-/*importer.load('./Objetos/Bed.fbx', function (object) {
-
-    var texture = new THREE.TextureLoader().load('./Images/DCloset.jpg');
-    var material = new THREE.MeshPhongMaterial({ map:texture });
-    object.traverse(function (child) 
-    {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            child.material = material;
-
-        }
-    
-    });
- 
-    cena.add(object);	
-
-    object.scale.x = 0.01;
-    object.scale.y = 0.01;
-    object.scale.z = 0.01;
-  
-    object.position.x = -12.8;
-    object.position.y = -0.5;
-    object.position.z = -10.3;
-    
-    objetoImportado = object; 
-
-});*/
 
 //var importer = new THREE.OBJLoader();
 importerOBJ.load('./Objetos/Podium.obj', function (object) {
@@ -555,9 +604,9 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     object.scale.y = 0.01;
     object.scale.z = 0.01;
 
-    object.position.x = 0;
-    object.position.y = 2;
-    object.position.z = -6.0;
+    object.position.x = -4.5;
+    object.position.y = 0;
+    object.position.z = -21;
 
     objetoImportado = object; 
 });
@@ -682,24 +731,14 @@ function onDocumentKeyDown(event) {
     if (keyCode == 67) {   
         mudarCamara();
     }
-        //comportamento para L, para abrir a janela pop-up(lista de objetos)
-        if(keyCode == 76)
-        {
-            if (popupWindow.style.display === 'block') {
-                closePopupWindow();
+    //comportamento para L, para abrir a janela pop-up(lista de objetos)
+    if(keyCode == 76)
+    {
+      if (popupWindow.style.display === 'block') {
+             closePopupWindow();
               } else {
                 openPopupWindow();
               }
-        }
-    //Comportamento para a tecla Barra de Espaço
-    if (keyCode == 32) {
-        //verificar se o cubo está presente na cena.
-        //caso esteja, removemos. Caso contrário, adicionamos.
-        if(meshCubo.parent == cena){
-            cena.remove(meshCubo);
-        }else{
-            cena.add(meshCubo);
-        }
     }
     //Lógica para ligar/desligar as luzes
     if (keyCode == 49) {    //press 1
@@ -730,6 +769,9 @@ function triggerdoor(mesh) {
     doorAnimation = new TWEEN.Tween(mesh.rotation)
     .to({ y: Math.PI / -2 }, 1000) // Rotate the door to 90 degrees (open position) in 1 second
     .start()
+    .onStart(function() {
+        doorSound.play(); // Play the door opening sound
+      })
     .onComplete(function () {
       mesh.userData.isopen = 1;
     });
@@ -737,8 +779,11 @@ function triggerdoor(mesh) {
     doorAnimation = new TWEEN.Tween(mesh.rotation)
     .to({ y: 0 }, 1000) // Rotate the door to 0 degrees (closed position) in 1 second
     .start()
+    .onStart(function() {
+        cdoorSound.play(); // Play the door closing sound
+      })
     .onComplete(function () {
-      mesh.userData.isopen = 0;
+      mesh.userData.isopen = 0; 
     });
   }
 }
@@ -749,6 +794,7 @@ var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
 var texture = new THREE.TextureLoader().load('./Images/fridge_texture.jpg');
 var materialFridge = new THREE.MeshBasicMaterial({ map: texture });
 meshFridge = new THREE.Mesh(geometriaFridge, materialFridge);
+meshFridge.rotation.y = Math.PI / 2;
 
 // create the fridge door mesh
 var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);  
@@ -845,7 +891,7 @@ var shelfMaterial = new THREE.MeshBasicMaterial({ map: texture});
 var shelfMesh= new THREE.Mesh(shelfGeometry, shelfMaterial);
 
 shelfMesh.position.y=0.50;
-shelfMesh.position.x=0.55;
+shelfMesh.position.x=0.56;
 
 meshFridge.add(shelfMesh);
 
@@ -895,7 +941,7 @@ meshFridge.position.z=z;
 }
 
 /********************************************************
- *                     portas                      *    
+ *                     portas                           *    
  * ******************************************************/
 
 function create_porta(x,y,z, rotate){
@@ -922,7 +968,7 @@ var portaMesh1 = create_porta(-2.6,1.35,-2.8, false);
 cena.add(portaMesh1);
 var portaMesh2 = create_porta(-2.6,1.35,-8.2, false);
 cena.add(portaMesh2);
-var portaMesh3 = create_porta(-2.6,1.35,-13.6, false);
+var portaMesh3 = create_porta(-2.6,1.35,-13.7, false);
 cena.add(portaMesh3);
 
 // create the other set of doors that open to the other side
@@ -1090,14 +1136,10 @@ var meshLamp;
 function create_lamp(x,y,z)
 {
 
-    // Texturas globais para serem usadas pelos meshs 
-    
+    // Texturas globais para serem usadas pelos meshs     
         var headtexture = new THREE.TextureLoader().load('./Images/LampHead2.jpg');
         var bodytexture = new THREE.TextureLoader().load('./Images/Metal.jpg');
         var basetexture = new THREE.TextureLoader().load('./Images/Dcloset.jpg');
-        //var cmaterial = new THREE.MeshBasicMaterial({ map:texture });
-        //var cmaterial = new THREE.MeshStandardMaterial({ map:texture });
-        //var cmaterial = new THREE.MeshPhongMaterial({ map:texture });
 
     // Middle Shelf Wall
         //var wallGeometry = new THREE.BoxGeometry(0.95, 2.5, 0.1);
@@ -1139,6 +1181,42 @@ function create_lamp(x,y,z)
         meshLamp.position.z=z;
 
 }
+
+/********************************************************
+ *                      Sound Effects                   *
+ ********************************************************/
+var listener = new THREE.AudioListener();
+camaraPerspetiva.add(listener); // Assuming your camera is in the scene
+// coin.add(listener);
+// key.add(listener);
+var audioLoader = new THREE.AudioLoader();
+var doorSound = new THREE.PositionalAudio(listener);
+var cdoorSound = new THREE.PositionalAudio(listener);
+var pickUpItem = new THREE.PositionalAudio(listener);
+
+//var pickupitem = new THREE.PositionalAudio(listener)
+
+audioLoader.load('./Sounds/DoorOpen.mp3', function(buffer) {
+  doorSound.setBuffer(buffer);
+  doorSound.setRefDistance(20); // Adjust the reference distance as needed
+  doorSound.setVolume(1);       // Adjust the volume as needed
+});
+
+audioLoader.load('./Sounds/DoorClose.mp3', function(buffer) {
+    cdoorSound.setBuffer(buffer);
+    cdoorSound.setRefDistance(20); // Adjust the reference distance as needed
+    cdoorSound.setVolume(1);       // Adjust the volume as needed
+  });
+
+audioLoader.load('./Sounds/PickUpItem.wav', function(buffer) {
+    pickUpItem.setBuffer(buffer);
+    pickUpItem.setRefDistance(20); // Adjust the reference distance as needed
+    pickUpItem.setVolume(1);       // Adjust the volume as needed
+  });
+
+audioLoader.load()
+
+
 /********************************************************
  *                      Raycaster                       *
  ********************************************************/
@@ -1147,31 +1225,65 @@ var raycaster = new THREE.Raycaster();
 // add a click event listener to the renderer
 renderer.domElement.addEventListener('click', onMouseClick);
 
+//RemoveFunction
+
 function onMouseClick(event) {
 
-  // calculate mouse position in normalized device coordinates
+        // Array of doors to trigger
+    var doorArray = [doorMesh, door2Mesh, portaMesh1, portaMesh2, portaMesh3, portaMesh4, portaMesh5, portaMesh6];
+  
+        // Calculate mouse position in normalized device coordinates
     var mouse = new THREE.Vector2();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  // set the raycaster position and direction based on the camera and mouse position
+  
+        // Set the raycaster position and direction based on the camera and mouse position
     raycaster.setFromCamera(mouse, camaraPerspetiva);
-
-  // get the objects that intersect with the raycaster
-  var intersects = raycaster.intersectObjects([doorMesh,door2Mesh,portaMesh1,portaMesh2,portaMesh3,portaMesh4,portaMesh5,portaMesh6]);
-
-  // if the ray intersects with the fridge door, toggle its state
-  // check if any object was intersected
-    if (intersects.length > 0) {
-      var intersectedObject = intersects[0].object;
-      triggerdoor(intersectedObject);
-    }
-    //   if (object === lampMesh) {
-    //     // Toggle the visibility of the spotlight
-    //        lamppointlight.visible = !lamppointlight.visible;
-    //     }
-    // 
+  
+    //     //Get the objects that intersect with the raycaster
+    //     // var intersects = raycaster.intersectObjects(removeObjectArray);
     
+
+    // CÓDIGO FEIO
+    // const intersectsKey = raycaster.intersectObject(key)
+    // const intersectsCoin = raycaster.intersectObject(coin);
+    // const intersectsTb = raycaster.intersectObject(tb, true)
+    // const intersectsComb = raycaster.intersectObject(comb, true)
+    //     if (intersectsCoin.length > 0) {
+    //         cena.remove(coin)
+    //     }
+    //     if (intersectsKey.length > 0) {
+    //         cena.remove(key)
+    //     }   
+    //     if (intersectsTb.length > 0) {
+    //         cena.remove(tb)
+    //     } 
+    //     if (intersectsComb.length > 0) {
+    //         cena.remove(comb)
+    //     } 
+
+    // CÓDIGO BONITO
+    var removeObjectArray = [key, coin, tb, comb];
+    removeObjectArray.forEach(object=>{
+          var ok = raycaster.intersectObject(object)
+          if (ok.length>0)
+          { 
+            cena.remove(object);
+            pickUpItem.play();
+          }
+      });
+
+      
+  // get the objects that intersect with the raycaster in the door array
+ var doorIntersects = raycaster.intersectObjects(doorArray);
+
+  // if the ray intersects with any of the doors in the array
+  if (doorIntersects.length > 0) {
+    var doorObject = doorIntersects[0].object;
+
+    // call the triggerdoor function with the intersected door object as a parameter
+    triggerdoor(doorObject);
+  }
 }
   
 
@@ -1286,9 +1398,8 @@ btnCamaras.onclick = function ()
 
 function Start() {
 
-    create_frigo(-10.25,1.1,-10);
+    create_frigo(-1.8,1.6,-14);
     cena.add(meshFridge);
-    cena.add(meshCubo);
     create_portaexterior(-4.5,1.35,-24.5);
     cena.add(portaExteriorMesh);
 
@@ -1317,8 +1428,6 @@ function Start() {
 }
 
 function loop() {
-
-    meshCubo.rotateY(Math.PI / 180 * 1);
 
     //Necessário atualizar o mixer de animação tendo em conta o tempo desde o ultimo update.
     //relogio.getDelta() indica quanto tempo passou desde o último frame renderizado.
