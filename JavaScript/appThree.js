@@ -607,24 +607,27 @@ document.getElementById("score").innerHTML=score2;
 requestAnimationFrame(update); */
 
 
-const popupWindow = document.getElementById('popupWindow');
+const popupWindow = document.getElementById('popupWindow'); 
+const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Spoon', color:0xff0000}];
+//const listaObjetos = document.getElementById('ul');
+
+var elementoHTML = document.createElement('p'); // is a node
+elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
+console.log(popupWindow);
+popupWindow.appendChild(elementoHTML);
+
+
+//função para passar o array de objetos para a lista
+function parseListaObjetos(lista) {
+    let result = '';
+    for (let i = 0; i < lista.length; i++) {
+      const obj = lista[i];
+      result += `${obj.name}<br>`;      //para mostrar apenas o nome do objeto
+    }
+    return result;
+  }
 
 function openPopupWindow() {
-    
-    const popupWindow = document.getElementById('popupWindow');
-    const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Spoon', color:0xff0000}];
-    //const listaObjetos = document.getElementById('ul');
-
-    console.log(listaObjetos);
-    popupWindow.appendChild(listaObjetos);
-
-    //iterar por a lista e criar elementos da lista
-    objects.forEach((object) => {
-        const listaObjetos = document.createElement('li');
-        listaObjetos.textContent = object.name;
-        //listaObjetos.style.color = object.color;
-        listaObjetos.appendChild(listaObjetos);
-    });
     popupWindow.style.display = 'block';
 }
 
@@ -682,11 +685,11 @@ function onDocumentKeyDown(event) {
         //comportamento para L, para abrir a janela pop-up(lista de objetos)
         if(keyCode == 76)
         {
-            openPopupWindow();
-        }
-        //comportamento para a tecla esc, para fechar a janela pop-up(lista de objetos)
-        if(keyCode == 27){
-            closePopupWindow();
+            if (popupWindow.style.display === 'block') {
+                closePopupWindow();
+              } else {
+                openPopupWindow();
+              }
         }
     //Comportamento para a tecla Barra de Espaço
     if (keyCode == 32) {
