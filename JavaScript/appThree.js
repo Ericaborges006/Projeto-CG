@@ -58,25 +58,25 @@ cena.add(luzPontual);
 const size = 100;
 const divisions = 100;
 
-// const gridHelper1 = new THREE.GridHelper( size, divisions );
-// gridHelper1.position.y = 1;
-// cena.add( gridHelper1 );
-// const gridHelper2 = new THREE.GridHelper( size, divisions );
-// gridHelper2.position.y = 0.8;
-// cena.add( gridHelper2 );
-// const gridHelper3 = new THREE.GridHelper( size, divisions );
-// gridHelper3.position.y = 0.5;
-// cena.add( gridHelper3 );
-// const gridHelper4 = new THREE.GridHelper( size, divisions );
-// gridHelper4.position.y = 1.3;
-// cena.add( gridHelper4 );
-// const gridHelper5 = new THREE.GridHelper( size, divisions );
-// gridHelper5.position.y = 1.8;
-// cena.add( gridHelper5 );
-// const gridHelper6 = new THREE.GridHelper( size, divisions );
-// gridHelper6.position.y = 2.3;
-// cena.add( gridHelper6 );
-
+/* const gridHelper1 = new THREE.GridHelper( size, divisions );
+gridHelper1.position.y = 1;
+cena.add( gridHelper1 );
+const gridHelper2 = new THREE.GridHelper( size, divisions );
+gridHelper2.position.y = 0.8;
+cena.add( gridHelper2 );
+const gridHelper3 = new THREE.GridHelper( size, divisions );
+gridHelper3.position.y = 0.5;
+cena.add( gridHelper3 );
+const gridHelper4 = new THREE.GridHelper( size, divisions );
+gridHelper4.position.y = 1.3;
+cena.add( gridHelper4 );
+const gridHelper5 = new THREE.GridHelper( size, divisions );
+gridHelper5.position.y = 1.8;
+cena.add( gridHelper5 );
+const gridHelper6 = new THREE.GridHelper( size, divisions );
+gridHelper6.position.y = 2.3;
+cena.add( gridHelper6 );
+ */
 
 /********************************************************
 Código base para importação de objetos 3D em formato FBX
@@ -633,8 +633,57 @@ function mudarCamara() {
 function toggleLight(light) {
     light.visible = !light.visible;
 }
-
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
+
+
+//const listaObjetos = ["Pencil", "Key", "Spoon"];
+
+//Criar uma função para adicionar itens à lista: Escreva uma função JavaScript que possa adicionar itens à janela pop-up. 
+//Esta função receberá os dados necessários para cada item da lista como entrada e gerará dinamicamente os elementos HTML para a lista.
+
+/* function addItensLista(){
+    var listaObjetos = document.getElementById("listaObjetos");
+    var item = document.createElement("li");
+    var texto = document.createTextNode("Item");
+    item.appendChild(texto);
+    listaObjetos.appendChild(item);
+} */
+
+/* score=score+0.008;
+score2=score.toString();
+score2=score2.slice(0,4);
+document.getElementById("score").innerHTML=score2;
+requestAnimationFrame(update); */
+
+
+const popupWindow = document.getElementById('popupWindow'); 
+const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Spoon', color:0xff0000}];
+//const listaObjetos = document.getElementById('ul');
+
+var elementoHTML = document.createElement('p'); // is a node
+elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
+console.log(popupWindow);
+popupWindow.appendChild(elementoHTML);
+
+
+//função para passar o array de objetos para a lista
+function parseListaObjetos(lista) {
+    let result = '';
+    for (let i = 0; i < lista.length; i++) {
+      const obj = lista[i];
+      result += `${obj.name}<br>`;      //para mostrar apenas o nome do objeto
+    }
+    return result;
+  }
+
+function openPopupWindow() {
+    popupWindow.style.display = 'block';
+}
+
+function closePopupWindow() {
+    popupWindow.style.display = 'none';
+}
+
 
 controls.addEventListener('lock', function() {
     //Possibilidade de programar comportamentos (ThreeJS ou mesmo HTML) quando
@@ -654,6 +703,7 @@ document.addEventListener(
         }, 
         false
     );
+
 
 //Adiciona o listener que permite detetar quando uma tecla é pressionada
 document.addEventListener("keydown", onDocumentKeyDown, false);
@@ -680,6 +730,15 @@ function onDocumentKeyDown(event) {
     //comportamento para a tecla C, para mudar entre as 2 câmaras
     if (keyCode == 67) {   
         mudarCamara();
+    }
+    //comportamento para L, para abrir a janela pop-up(lista de objetos)
+    if(keyCode == 76)
+    {
+      if (popupWindow.style.display === 'block') {
+             closePopupWindow();
+              } else {
+                openPopupWindow();
+              }
     }
     //Lógica para ligar/desligar as luzes
     if (keyCode == 49) {    //press 1
@@ -1334,6 +1393,8 @@ btnCamaras.onclick = function ()
       this._control.object = this._mainCamera;
 }
 */
+
+
 
 function Start() {
 
