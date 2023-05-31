@@ -17,8 +17,6 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
-let mixer; 
-const clock = new THREE.Clock();
 
 let isPerspectiveCameraActive = true;
 
@@ -39,7 +37,7 @@ renderer.setClearColor(0xaaaaaa);
 document.body.appendChild(renderer.domElement);
 
 //luz ambiente
-var luzAmbiente = new THREE.AmbientLight(0x404040, 1); // soft white light
+var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
 cena.add(luzAmbiente);
 
 //luz direcional
@@ -130,6 +128,9 @@ function isWithinDistanceThreshold(camaraPerspetiva, object) {
   return distance <= distanceThreshold;
 }
 
+const importedObjects = [];
+
+
 importer.load('./Objetos/tudo2.fbx', function (object) {
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load('./Images/Colors.png');
@@ -146,6 +147,7 @@ importer.load('./Objetos/tudo2.fbx', function (object) {
 
             // Adjust the metalness value to control how much the material reflects light
             child.material.metalness = 0;
+            
         }
     });
 
@@ -164,6 +166,7 @@ importer.load('./Objetos/tudo2.fbx', function (object) {
     object.position.z = 0   ;
 
     objetoImportado = object;
+    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/chao.fbx', function (object) {
@@ -181,6 +184,7 @@ importer.load('./Objetos/chao.fbx', function (object) {
     object.position.z = 0   ;
 
     objetoImportado = object;
+    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/teto.fbx', function (object) {
@@ -198,7 +202,9 @@ importer.load('./Objetos/teto.fbx', function (object) {
     object.position.z = 0   ;
 
     objetoImportado = object;
+    importedObjects.push(object); 
 });
+
 
 importer.load('./Objetos/OldComputer.fbx', function (object) {
 
@@ -228,7 +234,7 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
     object.rotateY(Math.PI / 2);
 
     objetoImportado = object; 
-
+    importedObjects.push(object); 
 });
 var coin;
 importerOBJ.load('./Objetos/coin.obj', function (object) {
@@ -277,7 +283,7 @@ const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     
     object.rotateX(Math.PI / -2);
     coin = object;
-
+    importedObjects.push(object); 
 });
 var comb;
 importerOBJ.load('./Objetos/comb.obj', function (object) {
@@ -309,7 +315,7 @@ importerOBJ.load('./Objetos/comb.obj', function (object) {
     object.rotateZ(Math.PI / -7);
     
     comb = object; 
-
+    importedObjects.push(object); 
 });
 var cup;
 importerOBJ.load('./Objetos/cup.obj', function (object) {
@@ -338,7 +344,7 @@ importerOBJ.load('./Objetos/cup.obj', function (object) {
     object.position.z = -14.6;
     
     cup = object; 
-
+    importedObjects.push(object); 
 });
 var key;
 importerOBJ.load('./Objetos/key.obj', function (object) {
@@ -391,7 +397,7 @@ const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     object.rotateZ(Math.PI / 4);
 
     key = object;
-
+    importedObjects.push(object); 
 });
 
 importerOBJ.load('./Objetos/knife.obj', function (object) {
@@ -423,7 +429,7 @@ importerOBJ.load('./Objetos/knife.obj', function (object) {
     object.rotateZ(Math.PI / -1.3);
 
     objetoImportado = object; 
-
+    importedObjects.push(object); 
 });
 
 importerOBJ.load('./Objetos/opener.obj', function (object) {
@@ -455,7 +461,7 @@ importerOBJ.load('./Objetos/opener.obj', function (object) {
     object.rotateZ(Math.PI / 2);
     
     objetoImportado = object; 
-
+    importedObjects.push(object); 
 });
 
 importerOBJ.load('./Objetos/pencil.obj', function (object) {
@@ -487,7 +493,7 @@ importerOBJ.load('./Objetos/pencil.obj', function (object) {
     object.rotateZ(Math.PI / -2);
     
     objetoImportado = object; 
-
+    importedObjects.push(object); 
 });
 
 importerOBJ.load('./Objetos/spoon.obj', function (object) {
@@ -519,7 +525,7 @@ importerOBJ.load('./Objetos/spoon.obj', function (object) {
     object.rotateX(Math.PI / -2);
     
     objetoImportado = object; 
-
+    importedObjects.push(object); 
 });
 
 importerOBJ.load('./Objetos/spray.obj', function (object) {
@@ -548,7 +554,7 @@ importerOBJ.load('./Objetos/spray.obj', function (object) {
     object.position.z = -14.3;
     
     objetoImportado = object; 
-
+    importedObjects.push(object); 
 });
 
 var tb;
@@ -581,7 +587,7 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
     //object.rotateZ(Math.PI / 2);
     
     tb = object; 
-
+    importedObjects.push(object); 
 });
 
 //var importer = new THREE.OBJLoader();
@@ -592,7 +598,6 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
-            
         }
     
     });
@@ -608,6 +613,7 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     object.position.z = -21;
 
     objetoImportado = object; 
+    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/Burger.fbx', function (object) {
@@ -620,9 +626,8 @@ importer.load('./Objetos/Burger.fbx', function (object) {
     object.position.x = -2;
     object.position.y = 1.6;
     object.position.z = -14.5;
+    importedObjects.push(object); 
 });
-
-
 var banana;
 importer.load('./Objetos/Banana.fbx', function (object) {
 
@@ -660,6 +665,7 @@ importer.load('./Objetos/Banana.fbx', function (object) {
     object.position.y = 0.6;
     object.position.z = -14.5;
     banana=object;
+    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/Watermelon.fbx', function (object) {
@@ -685,8 +691,8 @@ importer.load('./Objetos/Watermelon.fbx', function (object) {
     object.position.x = -2;
     object.position.y = 1.3;
     object.position.z = -14.5;
+    importedObjects.push(object); 
 });
-
 var can;
 importer.load('./Objetos/Can.fbx', function (object) {
     var texture = new THREE.TextureLoader().load('./Images/Can.png');
@@ -723,13 +729,12 @@ importer.load('./Objetos/Can.fbx', function (object) {
     object.position.y = 0.1;
     object.position.z = -14.5;
     can = object;
+    importedObjects.push(object); 
 });
 
-
-var doguinho;
-importer.load('./Objetos/Doguinho.fbx', function (object) {
-
-    var texture = new THREE.TextureLoader().load('./Images/DogBase.png');
+var hat;
+importer.load('./Objetos/Hat.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/hat.jpg');
     var material = new THREE.MeshPhongMaterial({ map:texture });
 
     object.traverse(function (child) 
@@ -741,28 +746,29 @@ importer.load('./Objetos/Doguinho.fbx', function (object) {
         }
     
     });
- 
-    cena.add(object);	
 
-    object.scale.x = 0.001;
-    object.scale.y = 0.001;
-    object.scale.z = 0.001;
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
 
-    object.position.x = -4;
-    object.position.y = 0;
-    object.position.z = -17;
+    // Add the bounding mesh as a child of the key object
 
-    doguinho = object;
-    const mixer = new THREE.AnimationMixer(doguinho);
+    object.add(boundingMesh);
+    cena.add(object);
+    
+    object.scale.x = 0.02;
+    object.scale.y = 0.02;
+    object.scale.z = 0.02;
 
-    importer.load('./Objetos/Walking.fbx', function (object) {
-        const animations = object.animations;
-      
-        // Assign the animations to the mixer
-        animations.forEach((animation) => {
-        mixer.clipAction(animation).play();
-        });
-      });
+    object.position.x = 0.5;
+    object.position.y = 1;
+    object.position.z = -11.5;
+    hat = object;
+    importedObjects.push(object); 
 });
 
 //função para mudar entre as 2 câmaras
@@ -789,6 +795,20 @@ function toggleLight(light) {
 }
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
+
+//const listaObjetos = ["Pencil", "Key", "Spoon"];
+
+//Criar uma função para adicionar itens à lista: Escreva uma função JavaScript que possa adicionar itens à janela pop-up. 
+//Esta função receberá os dados necessários para cada item da lista como entrada e gerará dinamicamente os elementos HTML para a lista.
+
+/* function addItensLista(){
+    var listaObjetos = document.getElementById("listaObjetos");
+    var item = document.createElement("li");
+    var texto = document.createTextNode("Item");
+    item.appendChild(texto);
+    listaObjetos.appendChild(item);
+} */
+
 /* score=score+0.008;
 score2=score.toString();
 score2=score2.slice(0,4);
@@ -797,7 +817,8 @@ requestAnimationFrame(update); */
 
 
 const popupWindow = document.getElementById('popupWindow'); 
-const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Toothbrush', color:0xff0000}, {name: 'Comb', color:0xff0000}];
+const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Spoon', color:0xff0000}];
+//const listaObjetos = document.getElementById('ul');
 
 var elementoHTML = document.createElement('p'); // is a node
 elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
@@ -851,8 +872,20 @@ document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
     var keyCode = event.which;
     //comportamento para a tecla W
-    if (keyCode == 87) {
-        controls.moveForward(0.25);
+    if (keyCode == 87) { // W key
+        var raycaster = new THREE.Raycaster();
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+        raycaster.set(controls.getObject().position, direction);
+    
+        var intersects = raycaster.intersectObjects(importedObjects);
+    
+        if (intersects.length > 0 && intersects[0].distance < 0.5) {
+          // There is an object too close, don't move forward
+          return;
+        } else {
+          // No objects close enough, move forward
+          controls.moveForward(0.25);
+        }
     }
     //Comportamento para a tecla S
     if (keyCode == 83) {
@@ -1402,7 +1435,7 @@ function onMouseClick(event) {
     //     } 
 
     // CÓDIGO BONITO
-    var removeObjectArray = [key, coin, tb, comb,banana,can];
+    var removeObjectArray = [key, coin, tb, comb, banana,can,hat];
     removeObjectArray.forEach(object=>{
           var ok = raycaster.intersectObject(object)
           if (ok.length>0)
@@ -1411,18 +1444,6 @@ function onMouseClick(event) {
             pickUpItem.play();
           }
       });
-
-/*      function crossOff(object) {
-        const listItems = document.querySelectorAll('#popupWindow p');
-      
-        for (let i = 0; i < listItems.length; i++) {
-          const listItem = listItems[i];
-          if (listItem.textContent.trim() === object.name) {
-            listItem.classList.add('crossed-off');
-            break; // Stop looping once the item is found and crossed off
-          }
-        }
-      }*/
 
       
   // get the objects that intersect with the raycaster in the door array
@@ -1436,23 +1457,22 @@ function onMouseClick(event) {
     triggerdoor(doorObject);
   }
 }
+  
 
 function animate() {
     requestAnimationFrame(animate);
     TWEEN.update();
     // Additional rendering or updating logic for your scene can be added here
-    
-    const delta = clock.getDelta();
-    if (mixer) {
-      mixer.update(delta);
-    }
-}
+  }
+  
   animate();
 
 
 /********************************************************
  *                          SKYBOX                      *    
  * ******************************************************/
+
+/*código default
 
 //Carregamento de texturas para as variáveis
 var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
@@ -1484,9 +1504,9 @@ var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 
 //adicionar o skybox à cena
-cena.add(skybox);
+cena.add(skybox);*/
 
-/* not working
+
 function createPathStrings(filename)
 {
     var path = "./Skybox/";
@@ -1526,7 +1546,27 @@ var skyboxMaterial = new THREE.MeshStandardMaterial(materialArray);
 var skybox = new THREE.Mesh(skyboxGeo, skyboxMaterial);
 
 //adicionar o skybox à cena
-cena.add(skybox);*/
+cena.add(skybox);
+
+// BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
+/*var btnCamaras = document.getElementById('ChangeView');
+btnCamaras.onclick = function () 
+{
+    if (this._cameraState.type == CameraMode.Perspective) {
+        this._mainCamera = this._perspectiveCamera;
+        this._mainCamera.position.copy(this._orthographicCamera.position);
+        this._mainCamera.rotation.copy(this._orthographicCamera.rotation);
+      } else if (this._cameraState.type == CameraMode.Orthographic) {
+        this._mainCamera = this._orthographicCamera;
+        this._mainCamera.position.copy(this._perspectiveCamera.position);
+        this._mainCamera.rotation.copy(this._perspectiveCamera.rotation);
+      }
+    
+      this._control.object = this._mainCamera;
+}
+*/
+
+
 
 function Start() {
 
@@ -1581,4 +1621,3 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
-
