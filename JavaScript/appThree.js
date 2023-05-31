@@ -492,8 +492,6 @@ importerOBJ.load('./Objetos/opener.obj', function (object) {
     objetoImportado = object;
 });
 
-
-
 importerOBJ.load('./Objetos/pencil.obj', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/pencil.png');
@@ -899,7 +897,7 @@ function mudarCamara() {
         console.log("Switched to PerspectiveCamera");
         cena.add(teto);
       }
-    }
+}
 
 //função para ligar e desligar as luzes
 function toggleLight(light) {
@@ -915,7 +913,8 @@ requestAnimationFrame(update); */
 
 
 const popupWindow = document.getElementById('popupWindow'); 
-const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Toothbrush', color:0xff0000}, {name: 'Comb', color:0xff0000}];
+const listaObjetos = [{name: 'Coin', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Toothbrush', color:0xff0000}, {name: 'Comb', color:0xff0000},
+{name: 'Hat', color:0xff0000},{name: 'Banana', color:0xff0000}];
 
 var elementoHTML = document.createElement('p'); // is a node
 elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
@@ -931,7 +930,7 @@ function parseListaObjetos(lista) {
       result += `${obj.name}<br>`;      //para mostrar apenas o nome do objeto
     }
     return result;
-  }
+}
 
 function openPopupWindow() {
     popupWindow.style.display = 'block';
@@ -984,7 +983,7 @@ function onDocumentKeyDown(event) {
          if (isPerspectiveCameraActive===true) {
         controls.moveForward(0.25);
         } else {
-        camara.translateY(0.25);
+        camara.translateY(0.25);}
         }
     }
     //Comportamento para a tecla S
@@ -1514,6 +1513,7 @@ var doorSound = new THREE.PositionalAudio(listener);
 var cdoorSound = new THREE.PositionalAudio(listener);
 var pickUpItem = new THREE.PositionalAudio(listener);
 var Nice = new THREE.PositionalAudio(listener);
+var GJ = new THREE.PositionalAudio(listener);
 //var pickupitem = new THREE.PositionalAudio(listener)
 
 audioLoader.load('./Sounds/DoorOpen.mp3', function(buffer) {
@@ -1539,6 +1539,11 @@ audioLoader.load('./Sounds/Nice.mp3', function(buffer) {
     Nice.setRefDistance(20); // Adjust the reference distance as needed
     Nice.setVolume(1);       // Adjust the volume as needed
   });
+  audioLoader.load('./Sounds/GJ.mp3', function(buffer) {
+    GJ.setBuffer(buffer);
+    GJ.setRefDistance(20); // Adjust the reference distance as needed
+    GJ.setVolume(1);       // Adjust the volume as needed
+  });  
 
 
 
@@ -1583,6 +1588,7 @@ function onMouseClick(event) {
         if (found == count){
             elementoHTML.innerHTML = "GANHASTE!";
             openPopupWindow();
+            GJ.play();
             //Nice.play();
         }
     },1000);
@@ -1758,4 +1764,3 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
-
