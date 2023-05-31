@@ -610,6 +610,94 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     objetoImportado = object; 
 });
 
+importer.load('./Objetos/Burger.fbx', function (object) {
+    cena.add(object);
+    
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = -2;
+    object.position.y = 1.6;
+    object.position.z = -14.5;
+});
+
+importer.load('./Objetos/Banana.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/Banana_basecolor.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+ 
+    cena.add(object);
+    
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = -2;
+    object.position.y = 0.6;
+    object.position.z = -14.5;
+});
+
+importer.load('./Objetos/Watermelon.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/watermelon.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
+
+    object.position.x = -2;
+    object.position.y = 1.3;
+    object.position.z = -14.5;
+});
+importer.load('./Objetos/Can.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/Can.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.001;
+    object.scale.y = 0.001;
+    object.scale.z = 0.001;
+
+    object.position.x = -2;
+    object.position.y = 0.1;
+    object.position.z = -14.5;
+});
+
+
 var doguinho;
 importer.load('./Objetos/Doguinho.fbx', function (object) {
 
