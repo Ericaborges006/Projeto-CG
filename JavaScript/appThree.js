@@ -622,6 +622,8 @@ importer.load('./Objetos/Burger.fbx', function (object) {
     object.position.z = -14.5;
 });
 
+
+var banana;
 importer.load('./Objetos/Banana.fbx', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/Banana_basecolor.png');
@@ -637,6 +639,17 @@ importer.load('./Objetos/Banana.fbx', function (object) {
     
     });
  
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
     cena.add(object);
     
     object.scale.x = 0.002;
@@ -646,6 +659,7 @@ importer.load('./Objetos/Banana.fbx', function (object) {
     object.position.x = -2;
     object.position.y = 0.6;
     object.position.z = -14.5;
+    banana=object;
 });
 
 importer.load('./Objetos/Watermelon.fbx', function (object) {
@@ -672,6 +686,8 @@ importer.load('./Objetos/Watermelon.fbx', function (object) {
     object.position.y = 1.3;
     object.position.z = -14.5;
 });
+
+var can;
 importer.load('./Objetos/Can.fbx', function (object) {
     var texture = new THREE.TextureLoader().load('./Images/Can.png');
     var material = new THREE.MeshPhongMaterial({ map:texture });
@@ -686,6 +702,17 @@ importer.load('./Objetos/Can.fbx', function (object) {
     
     });
 
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
     cena.add(object);
     
     object.scale.x = 0.001;
@@ -695,6 +722,7 @@ importer.load('./Objetos/Can.fbx', function (object) {
     object.position.x = -2;
     object.position.y = 0.1;
     object.position.z = -14.5;
+    can = object;
 });
 
 
@@ -1374,7 +1402,7 @@ function onMouseClick(event) {
     //     } 
 
     // CÓDIGO BONITO
-    var removeObjectArray = [key, coin, tb, comb];
+    var removeObjectArray = [key, coin, tb, comb,banana,can];
     removeObjectArray.forEach(object=>{
           var ok = raycaster.intersectObject(object)
           if (ok.length>0)
