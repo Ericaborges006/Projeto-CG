@@ -14,7 +14,7 @@ import { OBJLoader } from 'OBJLoader';
 document.addEventListener("DOMContentLoaded", Start);
 
 var cena = new THREE.Scene();
-var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
+var camara = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 1000);
 var renderer = new THREE.WebGLRenderer();
 
 
@@ -23,11 +23,11 @@ let isPerspectiveCameraActive = true;
 var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 100);
 
 // CamaraStart
-camaraPerspetiva.position.set(-8.5, 2, -17.2); // Camara posicionada à frente da prateleira
-camaraPerspetiva.lookAt(new THREE.Vector3(-8.5, 1.5, -14.2)); // Câmara a olhar para a prateleira
+//camaraPerspetiva.position.set(-8.5, 2, -17.2); // Camara posicionada à frente da prateleira
+//camaraPerspetiva.lookAt(new THREE.Vector3(-8.5, 1.5, -14.2)); // Câmara a olhar para a prateleira
 
- //camaraPerspetiva.position.set(-4.5, 2, -23); // Câmara inicializada à frente das duas portas da entrada)
- //camaraPerspetiva.lookAt(new THREE.Vector3(-4.5, 2, 2)); //Câmara a olhar para o corredor
+ camaraPerspetiva.position.set(-4.5, 2, -23); // Câmara inicializada à frente das duas portas da entrada)
+ camaraPerspetiva.lookAt(new THREE.Vector3(-4.5, 2, 2)); //Câmara a olhar para o corredor
 
 camara.updateProjectionMatrix();
 
@@ -97,15 +97,6 @@ var importer = new FBXLoader();
 //var importerOBJ = new OBJLoader();
 var importerOBJ = new OBJLoader();
 
-
-
-// OUTLINES
-
-// const Olight = new THREE.SpotLight(0x800080, 0.5, 5);
-// cena.add(Olight);
-
-
-
 /********************************************************
 *                    IMPORT DE OBJETOS                  *
 *********************************************************/
@@ -128,10 +119,7 @@ function isWithinDistanceThreshold(camaraPerspetiva, object) {
   return distance <= distanceThreshold;
 }
 
-
-
-
-importer.load('./Objetos/tudo2.fbx', function (object) {
+importer.load('./Objetos/casa.fbx', function (object) {
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load('./Images/Colors.png');
     const material = new THREE.MeshPhongMaterial({ map: texture });
@@ -184,6 +172,7 @@ importer.load('./Objetos/chao.fbx', function (object) {
     objetoImportado = object;
 });
 
+var teto;
 importer.load('./Objetos/teto.fbx', function (object) {
 
     cena.add(object);
@@ -198,7 +187,7 @@ importer.load('./Objetos/teto.fbx', function (object) {
     object.position.y = 0;
     object.position.z = 0   ;
 
-    objetoImportado = object;
+    teto = object;
 });
 
 
@@ -229,7 +218,6 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
     
     object.rotateY(Math.PI / 2);
 
-    objetoImportado = object; 
 
 });
 var coin;
@@ -279,6 +267,36 @@ const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     
     object.rotateX(Math.PI / -2);
     coin = object;
+
+});
+// *Moldura*
+var coin2;
+importerOBJ.load('./Objetos/coin.obj', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/coin2.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;            
+        }
+    
+    });
+
+    cena.add(object);	
+
+    object.scale.x = 1.2;
+    object.scale.y = 1.2;
+    object.scale.z = 1.2;
+  
+    object.position.x = -9;
+    object.position.y = 2;
+    object.position.z = -2.6;
+    
+    //object.rotateX(Math.PI / -2);
+    coin2 = object;
 
 });
 var comb;
@@ -357,13 +375,14 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     
     });
 
-     const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
-const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
-const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
-     // Set the position and rotation of the bounding mesh to match the key object
-        boundingMesh.position.copy(object.position);
-        boundingMesh.rotation.copy(object.rotation);
-        boundingMesh.scale.copy(object.scale);
+
+
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI);
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); 
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh.position.copy(object.position);
+    boundingMesh.rotation.copy(object.rotation);
+    boundingMesh.scale.copy(object.scale);
 
     // Add the bounding mesh as a child of the key object
 
@@ -459,6 +478,8 @@ importerOBJ.load('./Objetos/opener.obj', function (object) {
     objetoImportado = object; 
 
 });
+
+
 
 importerOBJ.load('./Objetos/pencil.obj', function (object) {
 
@@ -587,6 +608,7 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
 });
 
 //var importer = new THREE.OBJLoader();
+var podium;
 importerOBJ.load('./Objetos/Podium.obj', function (object) {
 
     object.traverse(function (child) 
@@ -608,26 +630,33 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     object.position.y = 0;
     object.position.z = -21;
 
-    objetoImportado = object; 
+    podium = object; 
 });
 
 //função para mudar entre as 2 câmaras
 function mudarCamara() {
-    //isPerspectiveCameraActive = !isPerspectiveCameraActive;
-  
-    // Set the active camera
-    if (isPerspectiveCameraActive==true) {
-      camara.position.copy(camaraPerspetiva.position);
-      camara.rotation.copy(camaraPerspetiva.rotation);
-      //renderer.render(cena, camaraPerspetiva);
-      isPerspectiveCameraActive = false;
-    } else {
-      camaraPerspetiva.position.copy(camara.position);
-      camaraPerspetiva.rotation.copy(camara.rotation);
-      //renderer.render(cena, camara);
-    isPerspectiveCameraActive = true;
+    var savePosition = new THREE.Vector3();
+    savePosition.copy(camaraPerspetiva.position);
+    var saveRotation = new THREE.Euler();
+    saveRotation.copy(camaraPerspetiva.rotation);
+    
+    if (isPerspectiveCameraActive) {
+        camara.position.set(0, 10, 0);
+        camara.rotation.set(-Math.PI / 2, 0, 0);
+        camara.updateProjectionMatrix();
+        isPerspectiveCameraActive = false;
+        console.log("Switched to OrthographicCamera");
+        cena.remove(teto);
+      } else {
+        // Switch back to PerspectiveCamera
+        camaraPerspetiva.position.copy(savePosition);
+        camaraPerspetiva.rotation.copy(saveRotation);
+        //camaraPerspetiva.updateProjectionMatrix();
+        isPerspectiveCameraActive = true;
+        console.log("Switched to PerspectiveCamera");
+        cena.add(teto);
+      }
     }
-}
 
 //função para ligar e desligar as luzes
 function toggleLight(light) {
@@ -663,20 +692,45 @@ function onDocumentKeyDown(event) {
     var keyCode = event.which;
     //comportamento para a tecla W
     if (keyCode == 87) {
+        if (isPerspectiveCameraActive===true) {
         controls.moveForward(0.25);
+        } else {
+        camara.translateY(0.25);
+        }
     }
     //Comportamento para a tecla S
     if (keyCode == 83) {
+        if (isPerspectiveCameraActive===true) {
         controls.moveForward(-0.25);
+    } else {
+    }
+        camara.translateY(-0.25);
     }
     //Comportamento para a tecla A
     if (keyCode == 65) {
+        if (isPerspectiveCameraActive===true) {
         controls.moveRight(-0.25);
+    } else {
+        camara.translateX(-0.25);
+    }
     }
     //Comportamento para a tecla D
     if (keyCode == 68) {
+        if (isPerspectiveCameraActive===true) {
         controls.moveRight(0.25);
+    } else {
+        camara.translateX(0.25);
     }
+    }
+     //Comportamento para a tecla D
+     if (keyCode == 16) {
+        camaraPerspetiva.translateY(0.25);
+    }
+     //Comportamento para a tecla D
+     if (keyCode == 17) {
+        camaraPerspetiva.translateY(-0.25);
+    }
+
     //comportamento para a tecla C, para mudar entre as 2 câmaras
     if (keyCode == 67) {   
         mudarCamara();
@@ -939,15 +993,42 @@ function create_portaexterior(x,y,z){
  ********************************************************/
 
 var meshCloset;
+var meshCanvas
+var meshCanvas2
 
+function create_canvas(x,y,z)
+{
+    var geometry = new THREE.PlaneGeometry(1.5, 2); 
+    var texture = new THREE.TextureLoader().load('./Images/DNC.png');
+    var material = new THREE.MeshPhongMaterial({ map: texture });
+    
+    // Create a mesh by combining the geometry and material
+    meshCanvas = new THREE.Mesh(geometry, material);
+
+        meshCanvas.position.x=x;
+        meshCanvas.position.y=y;
+        meshCanvas.position.z=z;
+}
+
+function create_canvas2(x,y,z)
+{
+    var geometry = new THREE.CircleGeometry(0.5, 32); 
+    var texture = new THREE.TextureLoader().load('./Images/stor.png');
+    var material = new THREE.MeshPhongMaterial({ map: texture });
+    
+    // Create a mesh by combining the geometry and material
+    meshCanvas2 = new THREE.Mesh(geometry, material);
+
+        meshCanvas2.position.x=x;
+        meshCanvas2.position.y=y;
+        meshCanvas2.position.z=z;
+}
 function create_armario(x,y,z)
 {
 
     // Texturas globais para serem usadas pelos meshs todos
     
         var texture = new THREE.TextureLoader().load('./Images/Dcloset2.jpg');
-        //var cmaterial = new THREE.MeshBasicMaterial({ map:texture });
-        //var cmaterial = new THREE.MeshStandardMaterial({ map:texture });
         var cmaterial = new THREE.MeshPhongMaterial({ map:texture });
 
     // Middle Shelf Wall
@@ -1181,39 +1262,22 @@ function onMouseClick(event) {
         // Set the raycaster position and direction based on the camera and mouse position
     raycaster.setFromCamera(mouse, camaraPerspetiva);
   
-    //     //Get the objects that intersect with the raycaster
-    //     // var intersects = raycaster.intersectObjects(removeObjectArray);
-    
-
-    // CÓDIGO FEIO
-    // const intersectsKey = raycaster.intersectObject(key)
-    // const intersectsCoin = raycaster.intersectObject(coin);
-    // const intersectsTb = raycaster.intersectObject(tb, true)
-    // const intersectsComb = raycaster.intersectObject(comb, true)
-    //     if (intersectsCoin.length > 0) {
-    //         cena.remove(coin)
-    //     }
-    //     if (intersectsKey.length > 0) {
-    //         cena.remove(key)
-    //     }   
-    //     if (intersectsTb.length > 0) {
-    //         cena.remove(tb)
-    //     } 
-    //     if (intersectsComb.length > 0) {
-    //         cena.remove(comb)
-    //     } 
-
     // CÓDIGO BONITO
-    var removeObjectArray = [key, coin, tb, comb];
-    removeObjectArray.forEach(object=>{
-          var ok = raycaster.intersectObject(object)
-          if (ok.length>0)
-          { 
-            cena.remove(object);
-            pickUpItem.play();
-          }
-      });
+    var removeObjectArray = [key, coin, tb, comb, coin2];
+    var intersects = raycaster.intersectObjects(removeObjectArray);
 
+
+
+    if(intersects.length >0)
+    {
+        if(intersects[0].object){
+        console.log("remove object");
+        cena.remove(intersects[0].object.parent);
+        intersects.object
+        pickUpItem.play();
+
+    }
+    }
       
   // get the objects that intersect with the raycaster in the door array
  var doorIntersects = raycaster.intersectObjects(doorArray);
@@ -1317,24 +1381,6 @@ var skybox = new THREE.Mesh(skyboxGeo, skyboxMaterial);
 //adicionar o skybox à cena
 cena.add(skybox);
 
-// BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
-/*var btnCamaras = document.getElementById('ChangeView');
-btnCamaras.onclick = function () 
-{
-    if (this._cameraState.type == CameraMode.Perspective) {
-        this._mainCamera = this._perspectiveCamera;
-        this._mainCamera.position.copy(this._orthographicCamera.position);
-        this._mainCamera.rotation.copy(this._orthographicCamera.rotation);
-      } else if (this._cameraState.type == CameraMode.Orthographic) {
-        this._mainCamera = this._orthographicCamera;
-        this._mainCamera.position.copy(this._perspectiveCamera.position);
-        this._mainCamera.rotation.copy(this._perspectiveCamera.rotation);
-      }
-    
-      this._control.object = this._mainCamera;
-}
-*/
-
 function Start() {
 
     create_frigo(-1.8,1.6,-14);
@@ -1346,6 +1392,10 @@ function Start() {
     cena.add(meshCloset);
     create_lamp(1, 1, -23);
     cena.add(meshLamp);
+    //create_canvas(-9, 2, -2.4);
+    //cena.add(meshCanvas);
+    create_canvas2(-9, 2, -2.6);
+    cena.add(meshCanvas2);
 
     //Criação de um foco de luz com a cor branca (#ffffff) e intensidade 1 (intensidade normal)
     var focoLuz = new THREE.SpotLight(0xffffff, 1);
@@ -1375,12 +1425,8 @@ function loop() {
     }
 
     if (isPerspectiveCameraActive==true) {
-        camara.position.copy(camaraPerspetiva.position);
-        camara.rotation.copy(camaraPerspetiva.rotation);
         renderer.render(cena, camaraPerspetiva);
       } else {
-        camaraPerspetiva.position.copy(camara.position);
-        camaraPerspetiva.rotation.copy(camara.rotation);
         renderer.render(cena, camara);
       }
 
