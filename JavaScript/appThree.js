@@ -128,9 +128,6 @@ function isWithinDistanceThreshold(camaraPerspetiva, object) {
   return distance <= distanceThreshold;
 }
 
-
-
-
 importer.load('./Objetos/tudo2.fbx', function (object) {
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load('./Images/Colors.png');
@@ -200,7 +197,6 @@ importer.load('./Objetos/teto.fbx', function (object) {
 
     objetoImportado = object;
 });
-
 
 importer.load('./Objetos/OldComputer.fbx', function (object) {
 
@@ -635,20 +631,6 @@ function toggleLight(light) {
 }
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
-
-//const listaObjetos = ["Pencil", "Key", "Spoon"];
-
-//Criar uma função para adicionar itens à lista: Escreva uma função JavaScript que possa adicionar itens à janela pop-up. 
-//Esta função receberá os dados necessários para cada item da lista como entrada e gerará dinamicamente os elementos HTML para a lista.
-
-/* function addItensLista(){
-    var listaObjetos = document.getElementById("listaObjetos");
-    var item = document.createElement("li");
-    var texto = document.createTextNode("Item");
-    item.appendChild(texto);
-    listaObjetos.appendChild(item);
-} */
-
 /* score=score+0.008;
 score2=score.toString();
 score2=score2.slice(0,4);
@@ -657,8 +639,7 @@ requestAnimationFrame(update); */
 
 
 const popupWindow = document.getElementById('popupWindow'); 
-const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Spoon', color:0xff0000}];
-//const listaObjetos = document.getElementById('ul');
+const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Toothbrush', color:0xff0000}, {name: 'Comb', color:0xff0000}];
 
 var elementoHTML = document.createElement('p'); // is a node
 elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
@@ -1273,6 +1254,18 @@ function onMouseClick(event) {
           }
       });
 
+/*      function crossOff(object) {
+        const listItems = document.querySelectorAll('#popupWindow p');
+      
+        for (let i = 0; i < listItems.length; i++) {
+          const listItem = listItems[i];
+          if (listItem.textContent.trim() === object.name) {
+            listItem.classList.add('crossed-off');
+            break; // Stop looping once the item is found and crossed off
+          }
+        }
+      }*/
+
       
   // get the objects that intersect with the raycaster in the door array
  var doorIntersects = raycaster.intersectObjects(doorArray);
@@ -1299,8 +1292,6 @@ function animate() {
 /********************************************************
  *                          SKYBOX                      *    
  * ******************************************************/
-
-/*código default
 
 //Carregamento de texturas para as variáveis
 var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
@@ -1332,9 +1323,9 @@ var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 
 //adicionar o skybox à cena
-cena.add(skybox);*/
+cena.add(skybox);
 
-
+/* not working
 function createPathStrings(filename)
 {
     var path = "./Skybox/";
@@ -1374,27 +1365,7 @@ var skyboxMaterial = new THREE.MeshStandardMaterial(materialArray);
 var skybox = new THREE.Mesh(skyboxGeo, skyboxMaterial);
 
 //adicionar o skybox à cena
-cena.add(skybox);
-
-// BOTÃO PARA MUDAR DE CÂMARAS ------------------------------------------------------
-/*var btnCamaras = document.getElementById('ChangeView');
-btnCamaras.onclick = function () 
-{
-    if (this._cameraState.type == CameraMode.Perspective) {
-        this._mainCamera = this._perspectiveCamera;
-        this._mainCamera.position.copy(this._orthographicCamera.position);
-        this._mainCamera.rotation.copy(this._orthographicCamera.rotation);
-      } else if (this._cameraState.type == CameraMode.Orthographic) {
-        this._mainCamera = this._orthographicCamera;
-        this._mainCamera.position.copy(this._perspectiveCamera.position);
-        this._mainCamera.rotation.copy(this._perspectiveCamera.rotation);
-      }
-    
-      this._control.object = this._mainCamera;
-}
-*/
-
-
+cena.add(skybox);*/
 
 function Start() {
 
