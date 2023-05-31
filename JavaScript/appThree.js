@@ -17,8 +17,12 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
-let mixer; 
-const clock = new THREE.Clock();
+//let mixer; 
+//const clock = new THREE.Clock();
+
+var doguinhoDirection = 1, doguinhoSpeed = 0.02;
+var walkingTime = 0, maxWalkingTime = 15 * 1000; // 15 seconds
+
 
 let isPerspectiveCameraActive = true;
 
@@ -637,7 +641,8 @@ importer.load('./Objetos/Doguinho.fbx', function (object) {
     object.position.z = -17;
 
     doguinho = object;
-    const mixer = new THREE.AnimationMixer(doguinho);
+    
+    /*const mixer = new THREE.AnimationMixer(doguinho);
 
     importer.load('./Objetos/Walking.fbx', function (object) {
         const animations = object.animations;
@@ -646,7 +651,8 @@ importer.load('./Objetos/Doguinho.fbx', function (object) {
         animations.forEach((animation) => {
         mixer.clipAction(animation).play();
         });
-      });
+      });*/
+
 });
 
 //função para mudar entre as 2 câmaras
@@ -1321,15 +1327,32 @@ function onMouseClick(event) {
   }
 }
 
+
+
 function animate() {
     requestAnimationFrame(animate);
     TWEEN.update();
     // Additional rendering or updating logic for your scene can be added here
     
-    const delta = clock.getDelta();
+    /*const delta = clock.getDelta();
     if (mixer) {
       mixer.update(delta);
-    }
+    }*/
+    // Move the cat back and forth
+    if (doguinho) {
+        // Move the cat back and forth
+        doguinho.position.z += doguinhoSpeed * doguinhoDirection;
+
+        // Increment the walking time
+        walkingTime += 16; // Approximate milliseconds per frame
+
+        // Change direction after 15 seconds
+        if (walkingTime >= maxWalkingTime) {
+          doguinhoDirection *= -1;
+          doguinho.rotation.y += Math.PI; // Rotate the dog 180 degrees
+          walkingTime = 0;
+        }
+      }
 }
   animate();
 
