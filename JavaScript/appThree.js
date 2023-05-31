@@ -360,8 +360,8 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     });
 
      const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
-const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
-const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
      // Set the position and rotation of the bounding mesh to match the key object
         boundingMesh.position.copy(object.position);
         boundingMesh.rotation.copy(object.rotation);
@@ -1222,7 +1222,7 @@ var audioLoader = new THREE.AudioLoader();
 var doorSound = new THREE.PositionalAudio(listener);
 var cdoorSound = new THREE.PositionalAudio(listener);
 var pickUpItem = new THREE.PositionalAudio(listener);
-
+var Nice = new THREE.PositionalAudio(listener);
 //var pickupitem = new THREE.PositionalAudio(listener)
 
 audioLoader.load('./Sounds/DoorOpen.mp3', function(buffer) {
@@ -1243,7 +1243,12 @@ audioLoader.load('./Sounds/PickUpItem.wav', function(buffer) {
     pickUpItem.setVolume(1);       // Adjust the volume as needed
   });
 
-audioLoader.load()
+audioLoader.load('./Sounds/Nice.mp3', function(buffer) {
+    Nice.setBuffer(buffer);
+    Nice.setRefDistance(20); // Adjust the reference distance as needed
+    Nice.setVolume(1);       // Adjust the volume as needed
+  });
+
 
 
 /********************************************************
@@ -1254,76 +1259,53 @@ var raycaster = new THREE.Raycaster();
 // add a click event listener to the renderer
 renderer.domElement.addEventListener('click', onMouseClick);
 
+var found=0;
+
 //RemoveFunction
-
 function onMouseClick(event) {
+    var removeObjectArray = [key, coin, tb, comb];
+    var count = removeObjectArray.length;
 
-        // Array of doors to trigger
+    // Array of doors to trigger
     var doorArray = [doorMesh, door2Mesh, portaMesh1, portaMesh2, portaMesh3, portaMesh4, portaMesh5, portaMesh6];
   
-        // Calculate mouse position in normalized device coordinates
+    // Calculate mouse position in normalized device coordinates
     var mouse = new THREE.Vector2();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   
-        // Set the raycaster position and direction based on the camera and mouse position
+    // Set the raycaster position and direction based on the camera and mouse position
     raycaster.setFromCamera(mouse, camaraPerspetiva);
-  
-    //     //Get the objects that intersect with the raycaster
-    //     // var intersects = raycaster.intersectObjects(removeObjectArray);
-    
-
-    // CÓDIGO FEIO
-    // const intersectsKey = raycaster.intersectObject(key)
-    // const intersectsCoin = raycaster.intersectObject(coin);
-    // const intersectsTb = raycaster.intersectObject(tb, true)
-    // const intersectsComb = raycaster.intersectObject(comb, true)
-    //     if (intersectsCoin.length > 0) {
-    //         cena.remove(coin)
-    //     }
-    //     if (intersectsKey.length > 0) {
-    //         cena.remove(key)
-    //     }   
-    //     if (intersectsTb.length > 0) {
-    //         cena.remove(tb)
-    //     } 
-    //     if (intersectsComb.length > 0) {
-    //         cena.remove(comb)
-    //     } 
-
-    // CÓDIGO BONITO
-    var removeObjectArray = [key, coin, tb, comb];
-    removeObjectArray.forEach(object=>{
-          var ok = raycaster.intersectObject(object)
-          if (ok.length>0)
-          { 
-            cena.remove(object);
-            pickUpItem.play();
-          }
-      });
-
-/*      function crossOff(object) {
-        const listItems = document.querySelectorAll('#popupWindow p');
-      
-        for (let i = 0; i < listItems.length; i++) {
-          const listItem = listItems[i];
-          if (listItem.textContent.trim() === object.name) {
-            listItem.classList.add('crossed-off');
-            break; // Stop looping once the item is found and crossed off
-          }
+    console.log(removeObjectArray);
+    removeObjectArray.forEach((object, index) => {
+        var ok = raycaster.intersectObject(object);
+        if (ok.length > 0) {
+          found += 1;
+          console.log(found);
+          cena.remove(object);
+          pickUpItem.play();
         }
-      }*/
-
+      });
       
-  // get the objects that intersect with the raycaster in the door array
- var doorIntersects = raycaster.intersectObjects(doorArray);
+    setTimeout(function(){
+        if (found == count){
+            elementoHTML.innerHTML = "GANHASTE!";
+            openPopupWindow();
+            //Nice.play();
+        }
+    },1000);
+    
+    
+    // get the objects that intersect with the raycaster in the door array
+    var doorIntersects = raycaster.intersectObjects(doorArray);
 
-  // if the ray intersects with any of the doors in the array
-  if (doorIntersects.length > 0) {
+    // if the ray intersects with any of the doors in the array
+    if (doorIntersects.length > 0) {
     var doorObject = doorIntersects[0].object;
 
     // call the triggerdoor function with the intersected door object as a parameter
     triggerdoor(doorObject);
+    
   }
 }
 
@@ -1459,7 +1441,6 @@ function Start() {
 
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
-
 
     renderer.render(cena, camaraPerspetiva);
 
