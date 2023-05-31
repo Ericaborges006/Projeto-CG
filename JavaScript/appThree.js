@@ -1459,7 +1459,7 @@ var found=0;
 
 //RemoveFunction
 function onMouseClick(event) {
-    var removeObjectArray = [key, coin, tb, comb];
+    var removeObjectArray = [key, coin, tb, comb,hat,banana];
     var count = removeObjectArray.length;
 
     // Array of doors to trigger
