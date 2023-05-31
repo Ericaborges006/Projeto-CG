@@ -17,6 +17,12 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 1000);
 var renderer = new THREE.WebGLRenderer();
 
+//let mixer; 
+//const clock = new THREE.Clock();
+
+var doguinhoDirection = 1, doguinhoSpeed = 0.02;
+var walkingTime = 0, maxWalkingTime = 15 * 1000; // 15 seconds
+
 
 let isPerspectiveCameraActive = true;
 
@@ -37,7 +43,7 @@ renderer.setClearColor(0xaaaaaa);
 document.body.appendChild(renderer.domElement);
 
 //luz ambiente
-var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
+var luzAmbiente = new THREE.AmbientLight(0x404040, 1); // soft white light
 cena.add(luzAmbiente);
 
 //luz direcional
@@ -58,25 +64,25 @@ cena.add(luzPontual);
 const size = 100;
 const divisions = 100;
 
-// const gridHelper1 = new THREE.GridHelper( size, divisions );
-// gridHelper1.position.y = 1;
-// cena.add( gridHelper1 );
-// const gridHelper2 = new THREE.GridHelper( size, divisions );
-// gridHelper2.position.y = 0.8;
-// cena.add( gridHelper2 );
-// const gridHelper3 = new THREE.GridHelper( size, divisions );
-// gridHelper3.position.y = 0.5;
-// cena.add( gridHelper3 );
-// const gridHelper4 = new THREE.GridHelper( size, divisions );
-// gridHelper4.position.y = 1.3;
-// cena.add( gridHelper4 );
-// const gridHelper5 = new THREE.GridHelper( size, divisions );
-// gridHelper5.position.y = 1.8;
-// cena.add( gridHelper5 );
-// const gridHelper6 = new THREE.GridHelper( size, divisions );
-// gridHelper6.position.y = 2.3;
-// cena.add( gridHelper6 );
-
+/* const gridHelper1 = new THREE.GridHelper( size, divisions );
+gridHelper1.position.y = 1;
+cena.add( gridHelper1 );
+const gridHelper2 = new THREE.GridHelper( size, divisions );
+gridHelper2.position.y = 0.8;
+cena.add( gridHelper2 );
+const gridHelper3 = new THREE.GridHelper( size, divisions );
+gridHelper3.position.y = 0.5;
+cena.add( gridHelper3 );
+const gridHelper4 = new THREE.GridHelper( size, divisions );
+gridHelper4.position.y = 1.3;
+cena.add( gridHelper4 );
+const gridHelper5 = new THREE.GridHelper( size, divisions );
+gridHelper5.position.y = 1.8;
+cena.add( gridHelper5 );
+const gridHelper6 = new THREE.GridHelper( size, divisions );
+gridHelper6.position.y = 2.3;
+cena.add( gridHelper6 );
+ */
 
 /********************************************************
 Código base para importação de objetos 3D em formato FBX
@@ -96,6 +102,13 @@ var importer = new FBXLoader();
 
 //var importerOBJ = new OBJLoader();
 var importerOBJ = new OBJLoader();
+
+
+
+// OUTLINES
+
+// const Olight = new THREE.SpotLight(0x800080, 0.5, 5);
+// cena.add(Olight);
 
 /********************************************************
 *                    IMPORT DE OBJETOS                  *
@@ -153,6 +166,7 @@ importer.load('./Objetos/casa.fbx', function (object) {
     object.position.z = 0   ;
 
     objetoImportado = object;
+    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/chao.fbx', function (object) {
@@ -190,7 +204,6 @@ importer.load('./Objetos/teto.fbx', function (object) {
     teto = object;
 });
 
-
 importer.load('./Objetos/OldComputer.fbx', function (object) {
 
     var texture = new THREE.TextureLoader().load('./Images/octexture.png');
@@ -218,8 +231,10 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
     
     object.rotateY(Math.PI / 2);
 
-
+    objetoImportado = object;
 });
+
+
 var coin;
 importerOBJ.load('./Objetos/coin.obj', function (object) {
 
@@ -235,7 +250,7 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     
     });
 
-    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
 const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
 const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     // Set the position and rotation of the bounding mesh to match the key object
@@ -267,8 +282,8 @@ const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     
     object.rotateX(Math.PI / -2);
     coin = object;
-
 });
+
 // *Moldura*
 var coin2;
 importerOBJ.load('./Objetos/coin.obj', function (object) {
@@ -299,6 +314,7 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     coin2 = object;
 
 });
+
 var comb;
 importerOBJ.load('./Objetos/comb.obj', function (object) {
 
@@ -329,6 +345,7 @@ importerOBJ.load('./Objetos/comb.obj', function (object) {
     object.rotateZ(Math.PI / -7);
     
     comb = object; 
+    importedObjects.push(object);
 
 });
 var cup;
@@ -357,9 +374,9 @@ importerOBJ.load('./Objetos/cup.obj', function (object) {
     object.position.y = 1;
     object.position.z = -14.6;
     
-    cup = object; 
-
+    cup = object;
 });
+
 var key;
 importerOBJ.load('./Objetos/key.obj', function (object) {
     
@@ -374,7 +391,6 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
         }
     
     });
-
 
 
     const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI);
@@ -412,7 +428,6 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     object.rotateZ(Math.PI / 4);
 
     key = object;
-
 });
 
 importerOBJ.load('./Objetos/knife.obj', function (object) {
@@ -443,8 +458,7 @@ importerOBJ.load('./Objetos/knife.obj', function (object) {
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / -1.3);
 
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/opener.obj', function (object) {
@@ -475,8 +489,7 @@ importerOBJ.load('./Objetos/opener.obj', function (object) {
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / 2);
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 
@@ -509,8 +522,7 @@ importerOBJ.load('./Objetos/pencil.obj', function (object) {
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / -2);
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/spoon.obj', function (object) {
@@ -541,8 +553,7 @@ importerOBJ.load('./Objetos/spoon.obj', function (object) {
     object.rotateY(Math.PI / 2);
     object.rotateX(Math.PI / -2);
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/spray.obj', function (object) {
@@ -570,8 +581,7 @@ importerOBJ.load('./Objetos/spray.obj', function (object) {
     object.position.y = 1;
     object.position.z = -14.3;
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 var tb;
@@ -589,6 +599,26 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
         }
     
     });
+
+    const boundingGeometry = new THREE.SphereGeometry(1, 32, 32, 0, 4*Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
  
     cena.add(object);	
 
@@ -603,8 +633,7 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
     object.rotateX(Math.PI / -2);
     //object.rotateZ(Math.PI / 2);
     
-    tb = object; 
-
+    tb = object;
 });
 
 //var importer = new THREE.OBJLoader();
@@ -616,6 +645,7 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
+            
         }
     
     });
@@ -631,6 +661,219 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     object.position.z = -21;
 
     podium = object; 
+});
+
+var doguinho;
+importer.load('./Objetos/Doguinho.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/DogBase.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.001;
+    object.scale.y = 0.001;
+    object.scale.z = 0.001;
+
+    object.position.x = -4;
+    object.position.y = 0;
+    object.position.z = -17;
+
+    doguinho = object;
+    importedObjects.push(object);
+    
+    /*const mixer = new THREE.AnimationMixer(doguinho);
+
+    importer.load('./Objetos/Walking.fbx', function (object) {
+        const animations = object.animations;
+      
+        // Assign the animations to the mixer
+        animations.forEach((animation) => {
+        mixer.clipAction(animation).play();
+        });
+      });*/
+
+});
+
+importer.load('./Objetos/Burger.fbx', function (object) {
+    cena.add(object);
+    
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = -2;
+    object.position.y = 1.6;
+    object.position.z = -14.5;
+});
+
+var banana;
+importer.load('./Objetos/Banana.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/Banana_basecolor.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+    const boundingGeometry = new THREE.SphereGeometry(100, 32, 32, 0, 4*Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = -2;
+    object.position.y = 0.6;
+    object.position.z = -14.5;
+    banana=object;
+});
+
+importer.load('./Objetos/Watermelon.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/watermelon.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
+
+    object.position.x = -2;
+    object.position.y = 1.3;
+    object.position.z = -14.5;
+});
+
+var can;
+importer.load('./Objetos/Can.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/Can.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+    cena.add(object);
+    
+    object.scale.x = 0.001;
+    object.scale.y = 0.001;
+    object.scale.z = 0.001;
+
+    object.position.x = -2;
+    object.position.y = 0.1;
+    object.position.z = -14.5;
+    can = object;
+
+});
+
+var hat;
+importer.load('./Objetos/Hat.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/hat.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    const boundingGeometry = new THREE.SphereGeometry(20, 32, 32, 0, 4*Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.02;
+    object.scale.y = 0.02;
+    object.scale.z = 0.02;
+
+    object.position.x = 0.5;
+    object.position.y = 0.8;
+    object.position.z = -11.5;
+    hat = object;
+
 });
 
 //função para mudar entre as 2 câmaras
@@ -662,8 +905,42 @@ function mudarCamara() {
 function toggleLight(light) {
     light.visible = !light.visible;
 }
-
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
+
+/* score=score+0.008;
+score2=score.toString();
+score2=score2.slice(0,4);
+document.getElementById("score").innerHTML=score2;
+requestAnimationFrame(update); */
+
+
+const popupWindow = document.getElementById('popupWindow'); 
+const listaObjetos = [{name: 'Pencil', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Toothbrush', color:0xff0000}, {name: 'Comb', color:0xff0000}];
+
+var elementoHTML = document.createElement('p'); // is a node
+elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
+console.log(popupWindow);
+popupWindow.appendChild(elementoHTML);
+
+
+//função para passar o array de objetos para a lista
+function parseListaObjetos(lista) {
+    let result = '';
+    for (let i = 0; i < lista.length; i++) {
+      const obj = lista[i];
+      result += `${obj.name}<br>`;      //para mostrar apenas o nome do objeto
+    }
+    return result;
+  }
+
+function openPopupWindow() {
+    popupWindow.style.display = 'block';
+}
+
+function closePopupWindow() {
+    popupWindow.style.display = 'none';
+}
+
 
 controls.addEventListener('lock', function() {
     //Possibilidade de programar comportamentos (ThreeJS ou mesmo HTML) quando
@@ -684,15 +961,27 @@ document.addEventListener(
         false
     );
 
+
 //Adiciona o listener que permite detetar quando uma tecla é pressionada
 document.addEventListener("keydown", onDocumentKeyDown, false);
 
 //função que permite processar o evento de premir teclas e definir o seu respetivo comportamento
 function onDocumentKeyDown(event) {
     var keyCode = event.which;
-    //comportamento para a tecla W
-    if (keyCode == 87) {
-        if (isPerspectiveCameraActive===true) {
+
+    if (keyCode == 87) { // W key
+        var raycaster = new THREE.Raycaster();
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+        raycaster.set(controls.getObject().position, direction);
+    
+        var intersects = raycaster.intersectObjects(cena.children);
+    
+        if (intersects.length > 0 && intersects[0].distance < 0.5) {
+          // There is an object too close, don't move forward
+          return;
+        } else {
+          // No objects close enough, move forward
+         if (isPerspectiveCameraActive===true) {
         controls.moveForward(0.25);
         } else {
         camara.translateY(0.25);
@@ -734,6 +1023,15 @@ function onDocumentKeyDown(event) {
     //comportamento para a tecla C, para mudar entre as 2 câmaras
     if (keyCode == 67) {   
         mudarCamara();
+    }
+    //comportamento para L, para abrir a janela pop-up(lista de objetos)
+    if(keyCode == 76)
+    {
+      if (popupWindow.style.display === 'block') {
+             closePopupWindow();
+              } else {
+                openPopupWindow();
+              }
     }
     //Lógica para ligar/desligar as luzes
     if (keyCode == 49) {    //press 1
@@ -1215,7 +1513,7 @@ var audioLoader = new THREE.AudioLoader();
 var doorSound = new THREE.PositionalAudio(listener);
 var cdoorSound = new THREE.PositionalAudio(listener);
 var pickUpItem = new THREE.PositionalAudio(listener);
-
+var Nice = new THREE.PositionalAudio(listener);
 //var pickupitem = new THREE.PositionalAudio(listener)
 
 audioLoader.load('./Sounds/DoorOpen.mp3', function(buffer) {
@@ -1236,7 +1534,12 @@ audioLoader.load('./Sounds/PickUpItem.wav', function(buffer) {
     pickUpItem.setVolume(1);       // Adjust the volume as needed
   });
 
-audioLoader.load()
+audioLoader.load('./Sounds/Nice.mp3', function(buffer) {
+    Nice.setBuffer(buffer);
+    Nice.setRefDistance(20); // Adjust the reference distance as needed
+    Nice.setVolume(1);       // Adjust the volume as needed
+  });
+
 
 
 /********************************************************
@@ -1247,65 +1550,86 @@ var raycaster = new THREE.Raycaster();
 // add a click event listener to the renderer
 renderer.domElement.addEventListener('click', onMouseClick);
 
+var found=0;
+
 //RemoveFunction
-
 function onMouseClick(event) {
+    var removeObjectArray = [key, coin, tb, comb,hat,banana, coin2];
+    var count = removeObjectArray.length;
 
-        // Array of doors to trigger
+    // Array of doors to trigger
     var doorArray = [doorMesh, door2Mesh, portaMesh1, portaMesh2, portaMesh3, portaMesh4, portaMesh5, portaMesh6];
   
-        // Calculate mouse position in normalized device coordinates
+    // Calculate mouse position in normalized device coordinates
     var mouse = new THREE.Vector2();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   
-        // Set the raycaster position and direction based on the camera and mouse position
+    // Set the raycaster position and direction based on the camera and mouse position
     raycaster.setFromCamera(mouse, camaraPerspetiva);
-  
-    // CÓDIGO BONITO
-    var removeObjectArray = [key, coin, tb, comb, coin2];
-    var intersects = raycaster.intersectObjects(removeObjectArray);
 
-
-
-    if(intersects.length >0)
-    {
-        if(intersects[0].object){
-        console.log("remove object");
-        cena.remove(intersects[0].object.parent);
-        intersects.object
-        pickUpItem.play();
-
-    }
-    }
+    console.log(removeObjectArray);
+    removeObjectArray.forEach((object, index) => {
+        var ok = raycaster.intersectObject(object);
+        if (ok.length > 0) {
+          found += 1;
+          console.log(found);
+          cena.remove(object);
+          pickUpItem.play();
+        }
+      });
       
-  // get the objects that intersect with the raycaster in the door array
- var doorIntersects = raycaster.intersectObjects(doorArray);
+    setTimeout(function(){
+        if (found == count){
+            elementoHTML.innerHTML = "GANHASTE!";
+            openPopupWindow();
+            //Nice.play();
+        }
+    },1000);
+    
+    
+    // get the objects that intersect with the raycaster in the door array
+    var doorIntersects = raycaster.intersectObjects(doorArray);
 
-  // if the ray intersects with any of the doors in the array
-  if (doorIntersects.length > 0) {
+    // if the ray intersects with any of the doors in the array
+    if (doorIntersects.length > 0) {
     var doorObject = doorIntersects[0].object;
 
     // call the triggerdoor function with the intersected door object as a parameter
     triggerdoor(doorObject);
+    
   }
 }
-  
+
+
 
 function animate() {
     requestAnimationFrame(animate);
     TWEEN.update();
     // Additional rendering or updating logic for your scene can be added here
-  }
-  
+    
+    // Move the dog back and forth
+    if (doguinho) {
+        // Move the dog back and forth
+        doguinho.position.z += doguinhoSpeed * doguinhoDirection;
+
+        // Increment the walking time
+        walkingTime += 16; // Approximate milliseconds per frame
+
+        // Change direction after 15 seconds
+        if (walkingTime >= maxWalkingTime) {
+          doguinhoDirection *= -1;
+          doguinho.rotation.y += Math.PI; // Rotate the dog 180 degrees
+          walkingTime = 0;
+        }
+      }
+}
   animate();
 
 
 /********************************************************
  *                          SKYBOX                      *    
  * ******************************************************/
-
-/*código default
 
 //Carregamento de texturas para as variáveis
 var texture_dir = new THREE.TextureLoader().load('./Skybox/posx.jpg');      //imagem da direita
@@ -1337,9 +1661,9 @@ var skyboxGeo = new THREE.BoxGeometry(100, 100, 100);
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 
 //adicionar o skybox à cena
-cena.add(skybox);*/
+cena.add(skybox);
 
-
+/* not working
 function createPathStrings(filename)
 {
     var path = "./Skybox/";
@@ -1379,7 +1703,8 @@ var skyboxMaterial = new THREE.MeshStandardMaterial(materialArray);
 var skybox = new THREE.Mesh(skyboxGeo, skyboxMaterial);
 
 //adicionar o skybox à cena
-cena.add(skybox);
+cena.add(skybox);*/
+
 
 function Start() {
 
@@ -1410,7 +1735,6 @@ function Start() {
     //Adicionamos a luz à cena.
     cena.add(focoLuz);
 
-
     renderer.render(cena, camaraPerspetiva);
 
     requestAnimationFrame(loop);
@@ -1434,3 +1758,4 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+
