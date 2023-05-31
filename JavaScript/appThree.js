@@ -110,8 +110,6 @@ var importerOBJ = new OBJLoader();
 // const Olight = new THREE.SpotLight(0x800080, 0.5, 5);
 // cena.add(Olight);
 
-
-
 /********************************************************
 *                    IMPORT DE OBJETOS                  *
 *********************************************************/
@@ -168,6 +166,7 @@ importer.load('./Objetos/tudo2.fbx', function (object) {
     object.position.z = 0   ;
 
     objetoImportado = object;
+    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/chao.fbx', function (object) {
@@ -231,7 +230,7 @@ importer.load('./Objetos/OldComputer.fbx', function (object) {
     
     object.rotateY(Math.PI / 2);
 
-    objetoImportado = object; 
+    objetoImportado = object;
 
 });
 var coin;
@@ -249,7 +248,7 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     
     });
 
-    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
 const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
 const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     // Set the position and rotation of the bounding mesh to match the key object
@@ -281,8 +280,8 @@ const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     
     object.rotateX(Math.PI / -2);
     coin = object;
-
 });
+
 var comb;
 importerOBJ.load('./Objetos/comb.obj', function (object) {
 
@@ -313,6 +312,7 @@ importerOBJ.load('./Objetos/comb.obj', function (object) {
     object.rotateZ(Math.PI / -7);
     
     comb = object; 
+    importedObjects.push(object);
 
 });
 var cup;
@@ -341,9 +341,9 @@ importerOBJ.load('./Objetos/cup.obj', function (object) {
     object.position.y = 1;
     object.position.z = -14.6;
     
-    cup = object; 
-
+    cup = object;
 });
+
 var key;
 importerOBJ.load('./Objetos/key.obj', function (object) {
     
@@ -359,9 +359,9 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     
     });
 
-     const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
-    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
-    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
      // Set the position and rotation of the bounding mesh to match the key object
         boundingMesh.position.copy(object.position);
         boundingMesh.rotation.copy(object.rotation);
@@ -395,7 +395,6 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     object.rotateZ(Math.PI / 4);
 
     key = object;
-
 });
 
 importerOBJ.load('./Objetos/knife.obj', function (object) {
@@ -426,8 +425,7 @@ importerOBJ.load('./Objetos/knife.obj', function (object) {
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / -1.3);
 
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/opener.obj', function (object) {
@@ -458,8 +456,7 @@ importerOBJ.load('./Objetos/opener.obj', function (object) {
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / 2);
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/pencil.obj', function (object) {
@@ -490,8 +487,7 @@ importerOBJ.load('./Objetos/pencil.obj', function (object) {
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / -2);
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/spoon.obj', function (object) {
@@ -522,8 +518,7 @@ importerOBJ.load('./Objetos/spoon.obj', function (object) {
     object.rotateY(Math.PI / 2);
     object.rotateX(Math.PI / -2);
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 importerOBJ.load('./Objetos/spray.obj', function (object) {
@@ -551,8 +546,7 @@ importerOBJ.load('./Objetos/spray.obj', function (object) {
     object.position.y = 1;
     object.position.z = -14.3;
     
-    objetoImportado = object; 
-
+    objetoImportado = object;
 });
 
 var tb;
@@ -570,6 +564,26 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
         }
     
     });
+
+    const boundingGeometry = new THREE.SphereGeometry(1, 32, 32, 0, 4*Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
  
     cena.add(object);	
 
@@ -584,8 +598,7 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
     object.rotateX(Math.PI / -2);
     //object.rotateZ(Math.PI / 2);
     
-    tb = object; 
-
+    tb = object;
 });
 
 //var importer = new THREE.OBJLoader();
@@ -611,7 +624,7 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     object.position.y = 0;
     object.position.z = -21;
 
-    objetoImportado = object; 
+    objetoImportado = object;
 });
 
 var doguinho;
@@ -641,6 +654,7 @@ importer.load('./Objetos/Doguinho.fbx', function (object) {
     object.position.z = -17;
 
     doguinho = object;
+    importedObjects.push(object);
     
     /*const mixer = new THREE.AnimationMixer(doguinho);
 
@@ -653,6 +667,176 @@ importer.load('./Objetos/Doguinho.fbx', function (object) {
         });
       });*/
 
+});
+
+importer.load('./Objetos/Burger.fbx', function (object) {
+    cena.add(object);
+    
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = -2;
+    object.position.y = 1.6;
+    object.position.z = -14.5;
+});
+
+var banana;
+importer.load('./Objetos/Banana.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/Banana_basecolor.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+
+        }
+    
+    });
+    const boundingGeometry = new THREE.SphereGeometry(100, 32, 32, 0, 4*Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.002;
+    object.scale.y = 0.002;
+    object.scale.z = 0.002;
+
+    object.position.x = -2;
+    object.position.y = 0.6;
+    object.position.z = -14.5;
+    banana=object;
+});
+
+importer.load('./Objetos/Watermelon.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/watermelon.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.01;
+    object.scale.y = 0.01;
+    object.scale.z = 0.01;
+
+    object.position.x = -2;
+    object.position.y = 1.3;
+    object.position.z = -14.5;
+});
+
+var can;
+importer.load('./Objetos/Can.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/Can.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+    cena.add(object);
+    
+    object.scale.x = 0.001;
+    object.scale.y = 0.001;
+    object.scale.z = 0.001;
+
+    object.position.x = -2;
+    object.position.y = 0.1;
+    object.position.z = -14.5;
+    can = object;
+
+});
+
+var hat;
+importer.load('./Objetos/Hat.fbx', function (object) {
+    var texture = new THREE.TextureLoader().load('./Images/hat.jpg');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+
+    const boundingGeometry = new THREE.SphereGeometry(20, 32, 32, 0, 4*Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+     // Set the position and rotation of the bounding mesh to match the key object
+        boundingMesh.position.copy(object.position);
+        boundingMesh.rotation.copy(object.rotation);
+        boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
+
+    cena.add(object);
+    
+    object.scale.x = 0.02;
+    object.scale.y = 0.02;
+    object.scale.z = 0.02;
+
+    object.position.x = 0.5;
+    object.position.y = 0.8;
+    object.position.z = -11.5;
+    hat = object;
 });
 
 //função para mudar entre as 2 câmaras
@@ -741,8 +925,20 @@ document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
     var keyCode = event.which;
     //comportamento para a tecla W
-    if (keyCode == 87) {
-        controls.moveForward(0.25);
+    if (keyCode == 87) { // W key
+        var raycaster = new THREE.Raycaster();
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+        raycaster.set(controls.getObject().position, direction);
+    
+        var intersects = raycaster.intersectObjects(cena.children);
+    
+        if (intersects.length > 0 && intersects[0].distance < 0.5) {
+          // There is an object too close, don't move forward
+          return;
+        } else {
+          // No objects close enough, move forward
+          controls.moveForward(0.25);
+        }
     }
     //Comportamento para a tecla S
     if (keyCode == 83) {
@@ -1316,13 +1512,9 @@ function animate() {
     TWEEN.update();
     // Additional rendering or updating logic for your scene can be added here
     
-    /*const delta = clock.getDelta();
-    if (mixer) {
-      mixer.update(delta);
-    }*/
-    // Move the cat back and forth
+    // Move the dog back and forth
     if (doguinho) {
-        // Move the cat back and forth
+        // Move the dog back and forth
         doguinho.position.z += doguinhoSpeed * doguinhoDirection;
 
         // Increment the walking time
