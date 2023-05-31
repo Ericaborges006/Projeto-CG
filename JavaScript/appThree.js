@@ -17,6 +17,8 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
+let mixer; 
+const clock = new THREE.Clock();
 
 let isPerspectiveCameraActive = true;
 
@@ -37,7 +39,7 @@ renderer.setClearColor(0xaaaaaa);
 document.body.appendChild(renderer.domElement);
 
 //luz ambiente
-var luzAmbiente = new THREE.AmbientLight(0x404040, 0.5); // soft white light
+var luzAmbiente = new THREE.AmbientLight(0x404040, 1); // soft white light
 cena.add(luzAmbiente);
 
 //luz direcional
@@ -590,6 +592,7 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
+            
         }
     
     });
@@ -605,6 +608,45 @@ importerOBJ.load('./Objetos/Podium.obj', function (object) {
     object.position.z = -21;
 
     objetoImportado = object; 
+});
+
+var doguinho;
+importer.load('./Objetos/Doguinho.fbx', function (object) {
+
+    var texture = new THREE.TextureLoader().load('./Images/DogBase.png');
+    var material = new THREE.MeshPhongMaterial({ map:texture });
+
+    object.traverse(function (child) 
+    {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = material;
+        }
+    
+    });
+ 
+    cena.add(object);	
+
+    object.scale.x = 0.001;
+    object.scale.y = 0.001;
+    object.scale.z = 0.001;
+
+    object.position.x = -4;
+    object.position.y = 0;
+    object.position.z = -17;
+
+    doguinho = object;
+    const mixer = new THREE.AnimationMixer(doguinho);
+
+    importer.load('./Objetos/Walking.fbx', function (object) {
+        const animations = object.animations;
+      
+        // Assign the animations to the mixer
+        animations.forEach((animation) => {
+        mixer.clipAction(animation).play();
+        });
+      });
 });
 
 //função para mudar entre as 2 câmaras
@@ -1278,14 +1320,17 @@ function onMouseClick(event) {
     triggerdoor(doorObject);
   }
 }
-  
 
 function animate() {
     requestAnimationFrame(animate);
     TWEEN.update();
     // Additional rendering or updating logic for your scene can be added here
-  }
-  
+    
+    const delta = clock.getDelta();
+    if (mixer) {
+      mixer.update(delta);
+    }
+}
   animate();
 
 
@@ -1420,3 +1465,4 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+
