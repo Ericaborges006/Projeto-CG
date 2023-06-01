@@ -1084,7 +1084,7 @@ function create_frigo(x,y,z){
 // create the main fridge mesh
 var geometriaFridge = new THREE.BoxGeometry(0.1, 3, 1.2);
 var texture = new THREE.TextureLoader().load('./Images/fridge_texture.jpg');
-var materialFridge = new THREE.MeshBasicMaterial({ map: texture });
+var materialFridge = new THREE.MeshPhongMaterial({ map: texture });
 meshFridge = new THREE.Mesh(geometriaFridge, materialFridge);
 meshFridge.rotation.y = Math.PI / 2;
 
@@ -1092,7 +1092,7 @@ meshFridge.rotation.y = Math.PI / 2;
 var doorGeometry = new THREE.BoxGeometry(0.1, 2, 1.2);  
 doorGeometry.translate( 0, 0, -0.55 );
 var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
-var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+var doorMaterial = new THREE.MeshPhongMaterial({ map:texture });
 doorMesh = new THREE.Mesh(doorGeometry, doorMaterial);
 // position the door mesh relative to the fridge mesh
 doorMesh.position.x = 1.2;
@@ -1103,7 +1103,7 @@ meshFridge.add(doorMesh);
 
 //create door handle
 var handleGeometry=new THREE.BoxGeometry(0.1, 0.5, 0.1);
-var handleMaterial = new THREE.MeshBasicMaterial({ map: texture});
+var handleMaterial = new THREE.MeshPhongMaterial({ map: texture});
 var handleMesh= new THREE.Mesh(handleGeometry, handleMaterial);
 
 handleMesh.position.z=-1;
@@ -1115,7 +1115,7 @@ doorMesh.add(handleMesh);
 var door2Geometry = new THREE.BoxGeometry(0.1, 1, 1.2);
 door2Geometry.translate( 0, 0, -0.55 );
 var texture = new THREE.TextureLoader().load('/Images/Fridge_texture.jpg');
-var doorMaterial = new THREE.MeshBasicMaterial({ map:texture });
+var doorMaterial = new THREE.MeshPhongMaterial({ map:texture });
 door2Mesh = new THREE.Mesh(door2Geometry, doorMaterial);
 // position the 2nd door mesh relative to the fridge mesh
 door2Mesh.position.x = 1.2;
@@ -1127,7 +1127,7 @@ meshFridge.add(door2Mesh);
 
 //create 2nd door handle
 var handle2Geometry=new THREE.BoxGeometry(0.1, 0.3, 0.1);
-var handle2Material = new THREE.MeshBasicMaterial({ map: texture});
+var handle2Material = new THREE.MeshPhongMaterial({ map: texture});
 var handle2Mesh= new THREE.Mesh(handle2Geometry, handle2Material);
 
 handle2Mesh.position.z=-1;
@@ -1148,7 +1148,7 @@ meshFridge.add(wallMesh);
 
 // create the side wall of fridge
 var wall2Geometry = new THREE.BoxGeometry(0.1, 3, 1.1);
-var wallMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var wallMaterial = new THREE.MeshPhongMaterial({ map: texture });
 var wall2Mesh = new THREE.Mesh(wall2Geometry, wallMaterial);
 // position the wall mesh relative to the fridge mesh
 wall2Mesh.position.x = 0.6;
@@ -1159,7 +1159,7 @@ meshFridge.add(wall2Mesh);
 
 // create the roof of the fridge
 var roofGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
-var roofMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var roofMaterial = new THREE.MeshPhongMaterial({ map: texture });
 var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
 // position the roof mesh above the fridge mesh
 roofMesh.position.y = 1.55;
@@ -1169,7 +1169,7 @@ meshFridge.add(roofMesh);
 
 //create shelf5
 var shelf5Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
-var shelf5Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf5Material = new THREE.MeshPhongMaterial({ map: texture});
 var shelf5Mesh= new THREE.Mesh(shelf5Geometry, shelf5Material);
 
 shelf5Mesh.position.y=1;
@@ -1179,7 +1179,7 @@ meshFridge.add(shelf5Mesh);
 
 //create shelf
 var shelfGeometry=new THREE.BoxGeometry(1.2, 0.1, 1.0);
-var shelfMaterial = new THREE.MeshBasicMaterial({ map: texture});
+var shelfMaterial = new THREE.MeshPhongMaterial({ map: texture});
 var shelfMesh= new THREE.Mesh(shelfGeometry, shelfMaterial);
 
 shelfMesh.position.y=0.50;
@@ -1189,7 +1189,7 @@ meshFridge.add(shelfMesh);
 
 //create shelf2
 var shelf2Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
-var shelf2Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf2Material = new THREE.MeshPhongMaterial({ map: texture});
 var shelf2Mesh= new THREE.Mesh(shelf2Geometry, shelf2Material);
 
 shelf2Mesh.position.y=0;
@@ -1199,7 +1199,7 @@ meshFridge.add(shelf2Mesh);
 
 //create shelf3
 var shelf3Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
-var shelf3Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf3Material = new THREE.MeshPhongMaterial({ map: texture});
 var shelf3Mesh= new THREE.Mesh(shelf3Geometry, shelf3Material);
 
 shelf3Mesh.position.y=-0.50;
@@ -1209,7 +1209,7 @@ meshFridge.add(shelf3Mesh);
 
 //create shelf4
 var shelf4Geometry=new THREE.BoxGeometry(1.1, 0.1, 1.1);
-var shelf4Material = new THREE.MeshBasicMaterial({ map: texture});
+var shelf4Material = new THREE.MeshPhongMaterial({ map: texture});
 var shelf4Mesh= new THREE.Mesh(shelf4Geometry, shelf4Material);
 
 shelf4Mesh.position.y=-1;
@@ -1220,7 +1220,7 @@ meshFridge.add(shelf4Mesh);
 
 // create the floor of the fridge
 var floorGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.2);
-var floorMaterial = new THREE.MeshBasicMaterial({ map: texture });
+var floorMaterial = new THREE.MeshPhongMaterial({ map: texture });
 var floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
 // position the floor mesh below the fridge mesh
 floorMesh.position.y = -1.55;
@@ -1559,8 +1559,8 @@ var found=0;
 
 //RemoveFunction
 function onMouseClick(event) {
-    var removeObjectArray = [key, coin, tb, comb,hat,banana, coin2];
-    var count = removeObjectArray.length;
+    var removeObjectArray = [key, coin, tb, comb, hat, banana, coin2];
+    var count = removeObjectArray.length-1;
 
     // Array of doors to trigger
     var doorArray = [doorMesh, door2Mesh, portaMesh1, portaMesh2, portaMesh3, portaMesh4, portaMesh5, portaMesh6];
