@@ -936,11 +936,10 @@ requestAnimationFrame(update); */
 
 
 const popupWindow = document.getElementById('popupWindow'); 
-const listaObjetos = [{name: 'Coin', color:0xff0000},{name: 'Key', color:0xff0000}, {name: 'Toothbrush', color:0xff0000}, {name: 'Comb', color:0xff0000},
-{name: 'Hat', color:0xff0000},{name: 'Banana', color:0xff0000}];
+const listaObjetos = "<pre>" + "Coin\n" + "Comb\n" + "Key\n" + "Thoothbrush\n" + "Banana\n" + "Hat\n" + "<pre>";
 
 var elementoHTML = document.createElement('p'); // is a node
-elementoHTML.innerHTML = parseListaObjetos(listaObjetos);
+elementoHTML.innerHTML = listaObjetos;
 console.log(popupWindow);
 popupWindow.appendChild(elementoHTML);
 
@@ -1003,11 +1002,11 @@ function onDocumentKeyDown(event) {
           return;
         } else {
           // No objects close enough, move forward
-         if (isPerspectiveCameraActive===true) {
-        controls.moveForward(0.25);
-        } else {
-        camara.translateY(0.25);}
-        }
+            if (isPerspectiveCameraActive===true) {
+            controls.moveForward(0.25);
+            } else {
+                camara.translateY(0.25);}
+                }
     }
     //Comportamento para a tecla S
     if (keyCode == 83) {
