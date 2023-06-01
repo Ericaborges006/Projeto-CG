@@ -1514,6 +1514,7 @@ var cdoorSound = new THREE.PositionalAudio(listener);
 var pickUpItem = new THREE.PositionalAudio(listener);
 var Nice = new THREE.PositionalAudio(listener);
 var GJ = new THREE.PositionalAudio(listener);
+var dog = new THREE.PositionalAudio(listener);
 //var pickupitem = new THREE.PositionalAudio(listener)
 
 audioLoader.load('./Sounds/DoorOpen.mp3', function(buffer) {
@@ -1543,6 +1544,11 @@ audioLoader.load('./Sounds/Nice.mp3', function(buffer) {
     GJ.setBuffer(buffer);
     GJ.setRefDistance(20); // Adjust the reference distance as needed
     GJ.setVolume(1);       // Adjust the volume as needed
+  }); 
+audioLoader.load('./Sounds/dog.mp3', function(buffer) {
+    dog.setBuffer(buffer);
+    dog.setRefDistance(20); // Adjust the reference distance as needed
+    dog.setVolume(0.3);       // Adjust the volume as needed
   });  
 
 
@@ -1621,6 +1627,10 @@ function animate() {
 
         // Increment the walking time
         walkingTime += 16; // Approximate milliseconds per frame
+
+        if (walkingTime % 5000 === 0 && walkingTime !== 0) {
+            dog.play();
+          }
 
         // Change direction after 15 seconds
         if (walkingTime >= maxWalkingTime) {
