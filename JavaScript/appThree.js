@@ -986,52 +986,95 @@ document.addEventListener(
 //Adiciona o listener que permite detetar quando uma tecla é pressionada
 document.addEventListener("keydown", onDocumentKeyDown, false);
 
+function CamaraColosion(key){
+    var raycaster = new THREE.Raycaster();
+    let axis = new THREE.Vector3(0, 1, 0).normalize();
+    if(key == "W"){
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+    }
+    if(key == "S"){
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+        let angle = Math.PI;
+        direction.applyAxisAngle(axis, angle);
+    }
+    if(key == "A"){
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+        let angle = Math.PI/2;
+        direction.applyAxisAngle(axis, angle);
+    }
+    if(key == "D"){
+        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+        let angle = - Math.PI /2;
+        direction.applyAxisAngle(axis, angle);
+    }
+    var position = controls.getObject().position;
+    raycaster.set(position, direction);
+    var intersects = raycaster.intersectObjects(cena.children);
+    return intersects;
+}
+
 //função que permite processar o evento de premir teclas e definir o seu respetivo comportamento
 function onDocumentKeyDown(event) {
     var keyCode = event.which;
-
     if (keyCode == 87) { // W key
-        var raycaster = new THREE.Raycaster();
-        var direction = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
-        raycaster.set(controls.getObject().position, direction);
-    
-        var intersects = raycaster.intersectObjects(cena.children);
-    
-        if (intersects.length > 0 && intersects[0].distance < 0.5) {
+        var intersects = CamaraColosion("W");
+
+        if (intersects.length > 0 && intersects[0].distance < 1) {
           // There is an object too close, don't move forward
           return;
         } else {
           // No objects close enough, move forward
-            if (isPerspectiveCameraActive===true) {
+        if (isPerspectiveCameraActive===true) {
             controls.moveForward(0.25);
-            } else {
-                camara.translateY(0.25);}
-                }
+        } else {
+            camara.translateY(0.25);}
+        }
     }
     //Comportamento para a tecla S
     if (keyCode == 83) {
+        var intersects = CamaraColosion("S");
+
+        if (intersects.length > 0 && intersects[0].distance < 1) {
+          // There is an object too close, don't move forward
+          return;
+        } else {
         if (isPerspectiveCameraActive===true) {
-        controls.moveForward(-0.25);
-    } else {
-    }
-        camara.translateY(-0.25);
+            controls.moveForward(-0.25);
+        } else {
+            camara.translateY(-0.25);
+        }
+        }
     }
     //Comportamento para a tecla A
     if (keyCode == 65) {
-        if (isPerspectiveCameraActive===true) {
-        controls.moveRight(-0.25);
-    } else {
-        camara.translateX(-0.25);
-    }
+        var intersects = CamaraColosion("A");
+
+        if (intersects.length > 0 && intersects[0].distance < 1) {
+          // There is an object too close, don't move forward
+          return;
+        } else {
+            if (isPerspectiveCameraActive===true) {
+            controls.moveRight(-0.25);
+            } else {
+                camara.translateX(-0.25);
+            }
+        }
     }
     //Comportamento para a tecla D
     if (keyCode == 68) {
+        var intersects = CamaraColosion("D");
+
+        if (intersects.length > 0 && intersects[0].distance < 1) {
+          // There is an object too close, don't move forward
+          return;
+        } else {
         if (isPerspectiveCameraActive===true) {
         controls.moveRight(0.25);
     } else {
         camara.translateX(0.25);
     }
     }
+}
      //Comportamento para a tecla D
      if (keyCode == 16) {
         camaraPerspetiva.translateY(0.25);
