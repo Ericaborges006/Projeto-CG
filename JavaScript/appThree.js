@@ -1660,8 +1660,8 @@ function onMouseClick(event) {
         if (removeObjectArray.length == 1){
             elementoHTML.innerHTML = "GANHASTE!";
             openPopupWindow();
-            GJ.play();
-            //Nice.play();
+            //GJ.play();
+            Nice.play();
         }
     },1000);
     
