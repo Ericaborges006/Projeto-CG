@@ -330,6 +330,25 @@ importerOBJ.load('./Objetos/comb.obj', function (object) {
         }
     
     });
+
+    const boundingGeometry = new THREE.SphereGeometry(2, 32, 32, 0, Math.PI);
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); 
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    boundingMesh.position.copy(object.position);
+    boundingMesh.rotation.copy(object.rotation);
+    boundingMesh.scale.copy(object.scale);
+
+    // Add the bounding mesh as a child of the key object
+
+            object.add(boundingMesh);
+
+  
+    object.traverse(function (child) {
+        if (child.isMesh && child === boundingMesh) {
+          child.material = emissiveMaterial;
+        }
+
+    });
  
     cena.add(object);	
 
