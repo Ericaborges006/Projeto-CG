@@ -88,9 +88,12 @@ cena.add( gridHelper6 );
 Código base para importação de objetos 3D em formato FBX
 *********************************************************/
 
+
 //variável que guardará o objeto importado
 var objetoImportado;
 
+//objetos a remover da cena
+var removeObjectArray = [];
 //variável que irá guardar o controlador de aimações do objeto importado
 var mixerAnimacao;
 
@@ -166,7 +169,6 @@ importer.load('./Objetos/casa.fbx', function (object) {
     object.position.z = 0   ;
 
     objetoImportado = object;
-    importedObjects.push(object); 
 });
 
 importer.load('./Objetos/chao.fbx', function (object) {
@@ -250,9 +252,9 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     
     });
 
-const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
-const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
-const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
+    const boundingGeometry = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.PI); // Adjust the size of the bounding mesh to fit the key
+    const boundingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }); // Set the material to be invisible
+    const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     // Set the position and rotation of the bounding mesh to match the key object
         boundingMesh.position.copy(object.position);
         boundingMesh.rotation.copy(object.rotation);
@@ -281,7 +283,8 @@ const boundingMesh = new THREE.Mesh(boundingGeometry, boundingMaterial);
     object.position.z = -14.5;
     
     object.rotateX(Math.PI / -2);
-    coin = object;
+    object.name = "Coin";
+    removeObjectArray.push(object);
 });
 
 // *Moldura*
@@ -311,8 +314,8 @@ importerOBJ.load('./Objetos/coin.obj', function (object) {
     object.position.z = -2.6;
     
     //object.rotateX(Math.PI / -2);
+    removeObjectArray.push(object);
     coin2 = object;
-
 });
 
 var comb;
@@ -362,10 +365,8 @@ importerOBJ.load('./Objetos/comb.obj', function (object) {
 
     object.rotateX(Math.PI / -2);
     object.rotateZ(Math.PI / -7);
-    
-    comb = object; 
-    importedObjects.push(object);
-
+    object.name = "Comb"
+    removeObjectArray.push(object);
 });
 var cup;
 importerOBJ.load('./Objetos/cup.obj', function (object) {
@@ -445,8 +446,8 @@ importerOBJ.load('./Objetos/key.obj', function (object) {
     
     object.rotateX(Math.PI / 1);
     object.rotateZ(Math.PI / 4);
-
-    key = object;
+    object.name = "Key";
+    removeObjectArray.push(object);
 });
 
 importerOBJ.load('./Objetos/knife.obj', function (object) {
@@ -649,8 +650,8 @@ importerOBJ.load('./Objetos/toothbrush.obj', function (object) {
     
     object.rotateX(Math.PI / -2);
     //object.rotateZ(Math.PI / 2);
-    
-    tb = object;
+    object.name="Toothbrush";
+    removeObjectArray.push(object);
 });
 
 //var importer = new THREE.OBJLoader();
@@ -707,7 +708,6 @@ importer.load('./Objetos/Doguinho.fbx', function (object) {
     object.position.z = -17;
 
     doguinho = object;
-    importedObjects.push(object);
     
     /*const mixer = new THREE.AnimationMixer(doguinho);
 
@@ -778,7 +778,9 @@ importer.load('./Objetos/Banana.fbx', function (object) {
     object.position.x = -2;
     object.position.y = 0.6;
     object.position.z = -14.5;
-    banana=object;
+    banana = object;
+    object.name="Banana";
+    removeObjectArray.push(object);
 });
 
 importer.load('./Objetos/Watermelon.fbx', function (object) {
@@ -889,7 +891,9 @@ importer.load('./Objetos/Hat.fbx', function (object) {
     object.position.x = 0.5;
     object.position.y = 0.8;
     object.position.z = -11.5;
+    object.name="Hat";
     hat = object;
+    removeObjectArray.push(object);
 
 });
 
@@ -1580,13 +1584,9 @@ var raycaster = new THREE.Raycaster();
 // add a click event listener to the renderer
 renderer.domElement.addEventListener('click', onMouseClick);
 
-var found=0;
 
 //RemoveFunction
-function onMouseClick(event) {
-    var removeObjectArray = [key, coin, tb, comb, hat, banana, coin2];
-    var count = removeObjectArray.length-1;
-
+function onMouseClick(event) { 
     // Array of doors to trigger
     var doorArray = [doorMesh, door2Mesh, portaMesh1, portaMesh2, portaMesh3, portaMesh4, portaMesh5, portaMesh6];
   
@@ -1597,20 +1597,25 @@ function onMouseClick(event) {
   
     // Set the raycaster position and direction based on the camera and mouse position
     raycaster.setFromCamera(mouse, camaraPerspetiva);
-
-    console.log(removeObjectArray);
+    var lista="";
     removeObjectArray.forEach((object, index) => {
         var ok = raycaster.intersectObject(object);
         if (ok.length > 0) {
-          found += 1;
-          console.log(found);
-          cena.remove(object);
-          pickUpItem.play();
+            if (removeObjectArray.indexOf(object)!==removeObjectArray.length-1)lista = "<pre>" + lista + "\n" + removeObjectArray[index+1].name + "<pre>";
+            removeObjectArray.splice(index,1);
+            cena.remove(object);
+            pickUpItem.play();
+        }else{
+            if(object !== coin2) lista = "<pre>" + lista + "\n" + object.name + "<pre>";
         }
-      });
-      
+    });
+    console.log(removeObjectArray); //debug
+    elementoHTML.innerHTML = lista;
+    if(!removeObjectArray.includes(coin2)){ removeObjectArray.push(coin2); }  // ignorar apanhar o easter egg XD
+
+
     setTimeout(function(){
-        if (found == count){
+        if (removeObjectArray.length == 1){
             elementoHTML.innerHTML = "GANHASTE!";
             openPopupWindow();
             GJ.play();
@@ -1742,7 +1747,7 @@ cena.add(skybox);*/
 
 
 function Start() {
-
+    
     create_frigo(-1.8,1.6,-14);
     cena.add(meshFridge);
     create_portaexterior(-4.5,1.35,-24.5);
